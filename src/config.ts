@@ -114,7 +114,8 @@ const config = {
 
   // ─── 背景图 ──────────────────────────────
   /** 背景图路径（放在 public/ 目录下） */
-  backgroundImage: '/character-bg.jpg',
+  // 使用 BASE_URL 适配 GitHub Pages 等子路径部署
+  backgroundImage: `${import.meta.env.BASE_URL}character-bg.jpg`,
   /** 背景图对焦位置（人脸位置，百分比） */
   backgroundPosition: 'center 22%',
 
