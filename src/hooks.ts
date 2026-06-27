@@ -10,6 +10,8 @@ export function useTypeWriter(text: string, speed: number = 100) {
 
   useEffect(() => {
     let index = 0
+    // 文本变化时需重置打字机状态
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 打字机动画重置是刻意设计
     setDisplayText('')
     setIsComplete(false)
     const timer = setInterval(() => {

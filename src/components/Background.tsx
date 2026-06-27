@@ -1,7 +1,7 @@
 /**
  * 首页动态背景 — 渐变网格、人物图 3D 倾斜、粒子与鼠标光晕
  */
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import config from '../config'
 import { useMousePosition } from '../hooks'
 
@@ -108,16 +108,20 @@ export function CharacterBackground() {
   )
 }
 
-/** 上升粒子动效 */
+/** 上升粒子动效 — 用确定性伪随机避免 render 中 Math.random */
 export function Particles({ count = 30 }: { count?: number }) {
-  const particles = Array.from({ length: count }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    delay: Math.random() * 8,
-    duration: 8 + Math.random() * 10,
-    size: 1.5 + Math.random() * 4,
-    opacity: 0.2 + Math.random() * 0.5,
-  }))
+  const particles = useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => ({
+        id: i,
+        left: ((i * 17 + 23) % 100),
+        delay: ((i * 13) % 80) / 10,
+        duration: 8 + ((i * 7) % 10),
+        size: 1.5 + ((i * 11) % 40) / 10,
+        opacity: 0.2 + ((i * 19) % 50) / 100,
+      })),
+    [count]
+  )
   const colors = ['#fbbf24', '#f97316', '#ef4444', '#fde68a']
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 6 }}>

@@ -158,10 +158,11 @@ export default function Hero({ navigate }: HeroProps) {
               <span className="text-amber-300/70 text-xs font-mono">{config.serialLabel}</span>
             </div>
 
-            {/* 名字打字机 */}
+            {/* 名字打字机 — 全站唯一 h1，含 sr-only 完整 SEO 标题 */}
             <div style={{ animation: 'slideInLeft 0.9s ease-out 0.5s both' }}>
               <div className="text-amber-300/80 text-sm md:text-base font-mono tracking-[0.3em] mb-2 uppercase">Hello, I&apos;m</div>
               <h1 className="relative inline-block">
+                <span className="sr-only">{config.siteTitle}</span>
                 <span
                   className="block text-[4rem] sm:text-[6rem] md:text-[7rem] lg:text-[8rem] font-black leading-[0.85] tracking-tighter"
                   style={{
