@@ -212,7 +212,7 @@ export default function CasesPage({ activeCaseId, openCase, onBack }: CasesPageP
       <div className="relative max-w-4xl mx-auto">
         {!activeCase ? (
           <>
-            <SectionTitle sub="2 个完整行业案例">落地案例库</SectionTitle>
+            <SectionTitle as="h1" sub="2 个完整行业案例">落地案例库</SectionTitle>
             <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
               实体门店从 0 到 1 的 AI 改造案例，含量化成果、方案架构与可复制模块。公司名已脱敏，数据与简历一致。
             </p>

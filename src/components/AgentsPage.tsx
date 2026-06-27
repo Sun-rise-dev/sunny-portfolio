@@ -28,7 +28,7 @@ export default function AgentsPage() {
         style={{ background: `radial-gradient(ellipse at top right, ${config.theme.coolGlow} 0%, transparent 50%), ${config.theme.background}` }}
       />
       <div className="relative max-w-5xl mx-auto">
-        <SectionTitle sub="Coze · 工作流 · 自动化">Agent 作品</SectionTitle>
+        <SectionTitle as="h1" sub="Coze · 工作流 · 自动化">Agent 作品</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
           基于真实业务场景搭建的智能体与工作流，覆盖私信转化、内容生产与视频运营。
         </p>
@@ -44,7 +44,7 @@ export default function AgentsPage() {
               }}
             >
               <Tag>{agent.scene}</Tag>
-              <h3 className="text-lg font-bold text-white mt-3 mb-2">{agent.name}</h3>
+              <h2 className="text-lg font-bold text-white mt-3 mb-2">{agent.name}</h2>
               <p className="text-amber-100/60 text-sm flex-1">{agent.desc}</p>
               <div className="mt-3 space-y-1">
                 {agent.metrics.map((m) => (

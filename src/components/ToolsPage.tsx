@@ -13,7 +13,7 @@ export default function ToolsPage() {
         style={{ background: `radial-gradient(ellipse at bottom left, ${config.theme.warmGlow} 0%, transparent 50%), ${config.theme.background}` }}
       />
       <div className="relative max-w-4xl mx-auto">
-        <SectionTitle sub="自研 PWA · 轻量工具">工具产品</SectionTitle>
+        <SectionTitle as="h1" sub="自研 PWA · 轻量工具">工具产品</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
           基于 Cursor / Claude Code 开发的轻量应用，展示从需求到可运行原型的落地能力。
         </p>
@@ -34,7 +34,7 @@ export default function ToolsPage() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <Tag color={tool.color}>{tool.tag}</Tag>
-                  <h3 className="text-xl font-bold text-white mt-3 mb-2 group-hover:text-amber-200">{tool.title}</h3>
+                  <h2 className="text-xl font-bold text-white mt-3 mb-2 group-hover:text-amber-200">{tool.title}</h2>
                   <p className="text-amber-100/60 text-sm max-w-xl">{tool.desc}</p>
                 </div>
                 <span className="text-amber-300/60 text-sm group-hover:text-amber-200 shrink-0">

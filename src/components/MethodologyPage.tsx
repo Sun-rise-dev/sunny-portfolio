@@ -19,7 +19,7 @@ export default function MethodologyPage() {
         style={{ background: `radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 60%), ${config.theme.background}` }}
       />
       <div className="relative max-w-3xl mx-auto">
-        <SectionTitle sub="从诊断到复盘">我的 AI 落地方法论</SectionTitle>
+        <SectionTitle as="h1" sub="从诊断到复盘">我的 AI 落地方法论</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-10">
           AI 不是炫技，是找到业务最高 ROI 的环节嵌入，用数据驱动持续迭代。
         </p>
@@ -33,7 +33,7 @@ export default function MethodologyPage() {
                 style={{ background: config.theme.background, boxShadow: `0 0 12px ${config.theme.primary}66` }}
               />
               <div className="text-amber-400/80 text-xs font-mono mb-1">STEP {step.step}</div>
-              <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
+              <h2 className="text-xl font-bold text-white mb-2">{step.title}</h2>
               <p className="text-amber-100/70 text-sm mb-3">{step.definition}</p>
               <ul className="list-disc list-inside text-amber-100/50 text-sm space-y-1 mb-2">
                 {step.points.map((p) => (

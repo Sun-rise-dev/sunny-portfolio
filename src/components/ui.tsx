@@ -57,12 +57,20 @@ export function Tag({ children, color = config.theme.primary }: { children: Reac
   )
 }
 
-/** 区块标题（带左侧琥珀圆点） */
-export function SectionTitle({ children, sub }: { children: ReactNode; sub?: string }) {
+/** 区块标题（带左侧琥珀圆点）；as 控制语义层级，默认 h2，页面主标题传 h1 */
+export function SectionTitle({
+  children,
+  sub,
+  as: Heading = 'h2',
+}: {
+  children: ReactNode
+  sub?: string
+  as?: 'h1' | 'h2'
+}) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-      <h2 className="text-white font-bold text-lg tracking-wide">{children}</h2>
+      <Heading className="text-white font-bold text-lg tracking-wide">{children}</Heading>
       {sub && <span className="text-amber-300/50 text-xs font-mono">{sub}</span>}
     </div>
   )
