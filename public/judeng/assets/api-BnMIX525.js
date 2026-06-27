@@ -1,0 +1,1 @@
+async function e(e){throw Error(`AI 未配置：请设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY`)}async function t({prompt:e}){throw Error(`AI 未配置：请设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY`)}export{e as askGuideAi,t as generateCustomGuide};
