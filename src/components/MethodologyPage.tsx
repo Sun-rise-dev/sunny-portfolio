@@ -1,5 +1,5 @@
 /**
- * 方法论页 — AI 落地五步法垂直时间轴
+ * 方法论页 — AI 落地六步法垂直时间轴
  */
 import config from '../config'
 import { methodology } from '../content'
@@ -19,9 +19,9 @@ export default function MethodologyPage() {
         style={{ background: `radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 60%), ${config.theme.background}` }}
       />
       <div className="relative max-w-3xl mx-auto">
-        <SectionTitle as="h1" sub="从诊断到复盘">我的 AI 落地方法论</SectionTitle>
+        <SectionTitle as="h1" sub="从诊断到规模化复制">我的 AI 落地方法论</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-10">
-          AI 不是炫技，是找到业务最高 ROI 的环节嵌入，用数据驱动持续迭代。
+          单店验证是起点，第六步把方案抽象为可配置模块，支撑多门店/SaaS 批量交付。
         </p>
 
         <div className="relative pl-8 border-l-2 border-amber-500/30 space-y-10">

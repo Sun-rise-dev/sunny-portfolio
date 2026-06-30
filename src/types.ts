@@ -41,7 +41,7 @@ export interface Case {
   architecture: ArchNode[]
   actions: CaseAction[]
   metrics: Metric[]
-  review: { lessons: string[]; reusable: string[] }
+  review: { lessons: string[]; reusable: string[]; scaleOut: string[] }
 }
 
 /** Agent 作品卡片 */

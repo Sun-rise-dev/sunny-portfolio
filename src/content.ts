@@ -88,4 +88,15 @@ export const methodology: MethodStep[] = [
     points: ['投放/转化数据持续追踪', '从「凭感觉」转向「看数据」决策'],
     relatedCase: 'car-shop',
   },
+  {
+    step: 6,
+    title: '规模化复制',
+    definition: '把单店验证过的方案抽象为可配置模块，设计 rollout SOP，支撑多门店/SaaS 批量交付。',
+    points: [
+      '模块参数化：总部 80% 统一 + 门店 20% 定制（参考中医诊所内容工作流）',
+      '试点 → 3 店验证 → 全量推广，每阶段有明确验收指标',
+      '总部仪表盘 + 门店对比报表，支撑 SaaS/连锁客户成功',
+    ],
+    relatedCase: 'car-shop',
+  },
 ]

@@ -154,7 +154,7 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
         </div>
 
         <SectionTitle>复盘与可复制性</SectionTitle>
-        <div className="grid md:grid-cols-2 gap-6 text-sm">
+        <div className="grid md:grid-cols-2 gap-6 text-sm mb-8">
           <div>
             <h4 className="text-amber-300 font-semibold mb-2">经验总结</h4>
             <ul className="space-y-2 text-amber-100/70 list-disc list-inside">
@@ -171,6 +171,26 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* 规模化复制路径 — 假设性 rollout 设计，非已服务连锁客户 */}
+        <div
+          className="p-5 rounded-2xl text-sm"
+          style={{
+            background: 'rgba(251, 191, 36, 0.06)',
+            border: '1px solid rgba(251, 191, 36, 0.22)',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <SectionTitle>规模化复制路径</SectionTitle>
+          <p className="text-amber-100/50 text-xs mb-3 -mt-2">
+            以下为单店 pilot 验证后的 rollout 设计思路（假设性表述，非已落地连锁项目）。
+          </p>
+          <ul className="space-y-2 text-amber-100/75 list-disc list-inside">
+            {data.review.scaleOut.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>
@@ -214,7 +234,7 @@ export default function CasesPage({ activeCaseId, openCase, onBack }: CasesPageP
           <>
             <SectionTitle as="h1" sub="2 个完整行业案例">落地案例库</SectionTitle>
             <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
-              实体门店从 0 到 1 的 AI 改造案例，含量化成果、方案架构与可复制模块。公司名已脱敏，数据与简历一致。
+              单店是验证场：每个案例含量化成果、可复制模块，以及面向连锁/SaaS 的规模化 rollout 设计思路。公司名已脱敏，数据与简历一致。
             </p>
             <div className="grid gap-4">
               {cases.map((c) => (

@@ -185,18 +185,17 @@ export default function Hero({ navigate }: HeroProps) {
               {config.description}
             </p>
 
-            {/* 求职意向卡 */}
+            {/* 求职意向卡 — 文案来自 config.jobIntent */}
             <div
               className="inline-flex flex-wrap gap-2 px-4 py-2 rounded-xl text-xs text-amber-100/90"
               style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(251, 191, 36, 0.25)' }}
             >
-              <span>AI 实施顾问</span>
-              <span className="text-amber-400/50">·</span>
-              <span>北京</span>
-              <span className="text-amber-400/50">·</span>
-              <span>11k–12k</span>
-              <span className="text-amber-400/50">·</span>
-              <span>一周内到岗</span>
+              {config.jobIntent.map((item, i) => (
+                <span key={item} className="inline-flex items-center gap-2">
+                  {i > 0 && <span className="text-amber-400/50">·</span>}
+                  <span>{item}</span>
+                </span>
+              ))}
             </div>
 
             {/* 技能标签 */}

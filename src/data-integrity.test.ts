@@ -16,6 +16,7 @@ describe('cases 数据完整性', () => {
       expect(c.actions.length).toBeGreaterThan(0)
       expect(c.metrics.length).toBeGreaterThan(0)
       expect(c.review.lessons.length).toBeGreaterThan(0)
+      expect(c.review.scaleOut.length).toBeGreaterThanOrEqual(3)
     })
   })
 
@@ -46,8 +47,8 @@ describe('agents / tools / methodology 数据完整性', () => {
     })
   })
 
-  it('methodology 包含 5 步', () => {
-    expect(methodology).toHaveLength(5)
+  it('methodology 包含 6 步', () => {
+    expect(methodology).toHaveLength(6)
     methodology.forEach((step) => {
       expect(step.title).toBeTruthy()
       expect(step.definition).toBeTruthy()
