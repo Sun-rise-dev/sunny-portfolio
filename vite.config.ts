@@ -6,6 +6,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  // 5173 常被其他 Vite 项目占用，本地开发固定用 5180
+  server: {
+    port: 5180,
+    strictPort: false,
+  },
+  preview: {
+    port: 5180,
+  },
   test: {
     globals: true,
     environment: 'jsdom',

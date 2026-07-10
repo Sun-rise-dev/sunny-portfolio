@@ -198,6 +198,14 @@ export default function Hero({ navigate }: HeroProps) {
               ))}
             </div>
 
+            {/* 职责边界 — 与投递版简历一致 */}
+            <p
+              className="text-amber-100/55 text-xs leading-relaxed max-w-xl italic"
+              style={{ animation: 'slideInLeft 0.8s ease-out 0.85s both' }}
+            >
+              {config.boundaryStatement}
+            </p>
+
             {/* 技能标签 */}
             <div className="flex flex-wrap gap-2" style={{ animation: 'slideInLeft 0.8s ease-out 0.9s both' }}>
               {config.tags.slice(0, 6).map((tag, i) => (

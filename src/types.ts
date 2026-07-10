@@ -47,6 +47,8 @@ export interface Case {
   period: string
   role: string
   summary: string
+  /** 是否在列表默认展示；false 归入「早期参考」 */
+  featured?: boolean
   background: { industry: string; scale: string; painPoints: string[] }
   responsibilities: string[]
   architecture: ArchNode[]
@@ -54,6 +56,8 @@ export interface Case {
   metrics: Metric[]
   /** 脱敏物证截图（可选，路径相对 public/） */
   images?: CaseImage[]
+  /** 交付流程图（可选） */
+  deliveryFlow?: CaseImage
   review: {
     lessons: string[]
     reusable: string[]
@@ -75,15 +79,21 @@ export interface Agent {
   link?: string
   /** 面试时可现场演示完整链路（无公开链接） */
   liveDemo?: boolean
+  /** 是否在列表默认展示 */
+  featured?: boolean
 }
 
-/** PWA 工具产品 */
+/** PWA / 本地工具 */
 export interface Tool {
   title: string
   desc: string
   tag: string
   color: string
-  url: string
+  /** 外链；本地工具可省略 */
+  url?: string
+  /** 本地工具：不跳转，展示使用说明 */
+  localOnly?: boolean
+  hint?: string
 }
 
 /** 方法论时间轴步骤 */

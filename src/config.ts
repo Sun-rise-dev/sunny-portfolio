@@ -63,6 +63,10 @@ const config = {
     '一周内到岗',
   ],
 
+  /** 职责边界 — 与投递版简历一致 */
+  boundaryStatement:
+    '擅长需求确认与交付验收；接受功能/规则类反馈迭代；不对获客、转化、GMV 等 growth 结果负责。',
+
   stats: [
     { value: 3, suffix: '', label: 'B2B / Agent 主案例', color: '#f59e0b' },
     { value: 2, suffix: '', label: '预约系统交付', color: '#ef4444' },

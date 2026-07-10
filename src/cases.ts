@@ -68,6 +68,10 @@ export const cases: Case[] = [
       { src: img('cases/zhongyou/1.png'), caption: '员工预约页（脱敏）' },
       { src: img('cases/zhongyou/2.png'), caption: '管理后台与导出（脱敏）' },
     ],
+    deliveryFlow: {
+      src: img('cases/delivery-flow.svg'),
+      caption: 'B2B 预约交付流程：需求确认 → 规则配置 → 开发 → 部署 → 验收 → 交付',
+    },
     review: {
       lessons: [
         'B2B 交付的锚点是书面确认单 + 可验收规则，不是功能堆叠',
@@ -144,6 +148,10 @@ export const cases: Case[] = [
       { src: img('cases/kangyang/2.png'), caption: '后台管理（脱敏）' },
       { src: img('cases/kangyang/3.png'), caption: '规则配置 / 导出（脱敏）' },
     ],
+    deliveryFlow: {
+      src: img('cases/delivery-flow.svg'),
+      caption: '0→1 交付同样遵循：确认需求 → 配置规则 → 开发上线 → 验收交付',
+    },
     review: {
       lessons: [
         '0→1 先把「能约、能查、能导出」跑通，再谈规则精细化和多客户隔离',
@@ -216,6 +224,13 @@ export const cases: Case[] = [
       { label: '通知渠道', value: 1, suffix: ' 个', note: '飞书智能体私人通知（已接入）' },
       { label: '扩展接口', value: 1, suffix: ' 层', note: '预留公域 / ERP 接入' },
     ],
+    images: [
+      { src: img('cases/clinic-agent/feishu-notification.png'), caption: '飞书 · 新预约通知卡片（脱敏）' },
+      { src: img('cases/clinic-agent/coze-appointment-flow.png'), caption: 'Coze 多轮采集 → send_appointment_notification 插件' },
+      { src: img('cases/clinic-agent/coze-consult-faq.png'), caption: 'FAQ 咨询 + 边界内健康建议（不对疗效承诺）' },
+      { src: img('cases/clinic-agent/coze-plugin-search.png'), caption: '插件 search_service_price · 服务项目查询' },
+      { src: img('cases/clinic-agent/coze-welcome.png'), caption: '智能体欢迎页与能力说明' },
+    ],
     review: {
       lessons: [
         '智能体的价值在「结构化交付」，不只是聊天——通知可达、前台能跟进才算落地',
@@ -237,6 +252,7 @@ export const cases: Case[] = [
     industry: '汽车饰品 · 零售',
     period: '2025.09 – 2026.06',
     role: '新媒体运营 · AI 提效',
+    featured: false,
     summary:
       '门店运营期自研选题/文案/素材小工具 + Coze 私信智能体，嵌入日常内容产出流程；早期单店实践，非当前求职主案例。',
     background: {
@@ -287,6 +303,7 @@ export const cases: Case[] = [
     industry: '医疗健康 · 中医诊所',
     period: '2024.12 – 2025.08',
     role: '新媒体运营 · AI 提效',
+    featured: false,
     summary:
       '图文与视频 Agent 工作流提升内容产出效率；同期配置 Coze 智能客服（见上方案例）。早期单店实践，非当前求职主案例。',
     background: {
@@ -331,3 +348,9 @@ export const cases: Case[] = [
     },
   },
 ]
+
+/** 投递主案例 — Cases 列表默认展示 */
+export const featuredCases = cases.filter((c) => c.featured !== false)
+
+/** 早期参考 — 默认折叠 */
+export const archiveCases = cases.filter((c) => c.featured === false)

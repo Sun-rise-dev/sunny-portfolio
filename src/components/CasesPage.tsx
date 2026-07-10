@@ -1,8 +1,9 @@
 /**
  * 落地案例页 — 列表 + 详情六段叙事 + 脱敏物证图集
  */
+import { useState } from 'react'
 import config from '../config'
-import { cases } from '../cases'
+import { cases, featuredCases, archiveCases } from '../cases'
 import type { Case, CaseId } from '../types'
 import { Counter, SectionTitle, Tag } from './ui'
 
@@ -31,6 +32,22 @@ function ArchitectureFlow({ nodes }: { nodes: Case['architecture'] }) {
         </div>
       ))}
     </div>
+  )
+}
+
+/** B2B 交付流程图 */
+function DeliveryFlowDiagram({ flow }: { flow: NonNullable<Case['deliveryFlow']> }) {
+  return (
+    <section>
+      <SectionTitle>交付流程</SectionTitle>
+      <figure
+        className="rounded-2xl overflow-hidden p-3"
+        style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(251, 191, 36, 0.2)' }}
+      >
+        <img src={flow.src} alt={flow.caption} className="w-full h-auto" loading="lazy" />
+        <figcaption className="px-1 pt-2 text-amber-100/60 text-xs">{flow.caption}</figcaption>
+      </figure>
+    </section>
   )
 }
 
@@ -107,6 +124,8 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
           </div>
         </div>
       </section>
+
+      {data.deliveryFlow && <DeliveryFlowDiagram flow={data.deliveryFlow} />}
 
       {/* 物证截图（有则展示） */}
       {data.images && data.images.length > 0 && (
@@ -230,7 +249,7 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
 }
 
 /** 案例列表卡片 */
-function CaseListCard({ data, onClick }: { data: Case; onClick: () => void }) {
+function CaseListCard({ data, onClick, archived }: { data: Case; onClick: () => void; archived?: boolean }) {
   return (
     <button
       type="button"
@@ -238,11 +257,19 @@ function CaseListCard({ data, onClick }: { data: Case; onClick: () => void }) {
       className="group text-left p-6 rounded-2xl w-full transition-all hover:-translate-y-1"
       style={{
         background: 'rgba(0, 0, 0, 0.55)',
-        border: '1px solid rgba(251, 191, 36, 0.2)',
+        border: archived
+          ? '1px solid rgba(251, 191, 36, 0.12)'
+          : '1px solid rgba(251, 191, 36, 0.2)',
         backdropFilter: 'blur(10px)',
+        opacity: archived ? 0.85 : 1,
       }}
     >
-      <Tag>{data.industry}</Tag>
+      <div className="flex flex-wrap items-center gap-2">
+        <Tag>{data.industry}</Tag>
+        {archived && (
+          <span className="text-[10px] text-amber-100/40 uppercase tracking-wider">早期参考</span>
+        )}
+      </div>
       <h3 className="text-xl font-bold text-white mt-3 mb-2 group-hover:text-amber-200">{data.title}</h3>
       <p className="text-amber-100/60 text-sm mb-3">{data.summary}</p>
       <span className="text-amber-300/60 text-xs font-mono">{data.period}</span>
@@ -252,6 +279,7 @@ function CaseListCard({ data, onClick }: { data: Case; onClick: () => void }) {
 
 export default function CasesPage({ activeCaseId, openCase, onBack }: CasesPageProps) {
   const activeCase = activeCaseId ? cases.find((c) => c.id === activeCaseId) : null
+  const [showArchive, setShowArchive] = useState(false)
 
   return (
     <main className="relative min-h-screen pt-28 pb-16 px-6 md:px-12">
@@ -264,15 +292,33 @@ export default function CasesPage({ activeCaseId, openCase, onBack }: CasesPageP
       <div className="relative max-w-4xl mx-auto">
         {!activeCase ? (
           <>
-            <SectionTitle as="h1" sub="B2B 交付 · Agent 配置 · 脱敏物证">落地案例库</SectionTitle>
+            <SectionTitle as="h1" sub="3 个主案例 · 脱敏物证 · 交付流程">落地案例库</SectionTitle>
             <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
-              主案例为 B2B 健康预约系统（0→1 + Fork）与 Coze 智能客服；含脱敏截图与交付模块说明。早期单店运营实践排在后面作参考。公司名已脱敏，叙事与投递版简历一致。
+              主案例：B2B 健康预约（0→1 + Fork）+ Coze 智能客服，含流程图与脱敏截图。叙事与投递版简历一致；早期门店运营实践默认折叠。
             </p>
             <div className="grid gap-4">
-              {cases.map((c) => (
+              {featuredCases.map((c) => (
                 <CaseListCard key={c.id} data={c} onClick={() => openCase(c.id)} />
               ))}
             </div>
+            {archiveCases.length > 0 && (
+              <div className="mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowArchive((v) => !v)}
+                  className="text-amber-300/70 text-sm hover:text-amber-200 mb-4"
+                >
+                  {showArchive ? '▲ 收起早期参考案例' : `▼ 展开早期参考案例（${archiveCases.length}）`}
+                </button>
+                {showArchive && (
+                  <div className="grid gap-4">
+                    {archiveCases.map((c) => (
+                      <CaseListCard key={c.id} data={c} archived onClick={() => openCase(c.id)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <CaseDetailView data={activeCase} onBack={onBack} />

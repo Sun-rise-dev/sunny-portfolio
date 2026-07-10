@@ -5,13 +5,14 @@ import type { Agent, Tool, MethodStep } from './types'
 
 export const agents: Agent[] = [
   {
-    name: '光墉堂智能客服 · 小墉',
+    name: '某中医诊所 · 智能客服 · 小墉',
     scene: '中医诊所 · 预约咨询',
     desc:
       'Coze 智能体（Prompt + RAG）采集预约意向，经飞书智能体推送「新预约通知」至前台；预留公域/ERP 接口。面试可现场演示完整对话链路。',
     metrics: ['完整链路已验证', '飞书结构化通知', '面试专用演示'],
     stack: ['Coze', '知识库 RAG', '飞书智能体', 'Webhook 预留'],
     liveDemo: true,
+    featured: true,
   },
   {
     name: 'Coze 私信智能体',
@@ -19,6 +20,7 @@ export const agents: Agent[] = [
     desc: '覆盖高频问答、留资引导、到店预约；早期单店运营提效，非投递主案例。',
     metrics: ['3 类私信场景', '早期运营实践'],
     stack: ['Coze', '知识库 RAG', 'Prompt 设计'],
+    featured: false,
   },
   {
     name: '图文自动化工具',
@@ -26,6 +28,7 @@ export const agents: Agent[] = [
     desc: '选题到成稿流程自动化，单篇产出从 3 小时压到 40 分钟。',
     metrics: ['单篇提速 +78%'],
     stack: ['Claude Code', '工作流编排'],
+    featured: false,
   },
   {
     name: '视频 Agent 工作流',
@@ -33,16 +36,32 @@ export const agents: Agent[] = [
     desc: '脚本到剪辑链路的 Agent 工作流，更新频率从 2 条/周提到 5 条/周。',
     metrics: ['更新频率 2 → 5 条/周'],
     stack: ['Coze', 'Agent 工作流'],
+    featured: false,
   },
 ]
+
+/** 投递主 Agent — 列表默认展示 */
+export const featuredAgents = agents.filter((a) => a.featured !== false)
+
+/** 早期 Agent 实践 */
+export const archiveAgents = agents.filter((a) => a.featured === false)
 
 export const tools: Tool[] = [
   {
     title: 'JD 智能筛选工具',
-    desc: '本地 CLI + 油猴：Boss 等渠道 JD 按简历与求职边界 LLM 打分，支持多岗 rank 与改写建议',
-    tag: 'CLI · 油猴',
+    desc: '本地 CLI + 油猴：Boss 直聘 JD 按简历与求职边界 LLM 打分，支持多岗 rank 与改写建议',
+    tag: 'CLI · 油猴 · 本地',
     color: '#22c55e',
-    url: 'https://github.com/Sun-rise-dev',
+    localOnly: true,
+    hint: '本地项目 resume-matcher · 投岗前双击 start.bat 启动服务，浏览器油猴脚本即可用',
+  },
+  {
+    title: '微信 AI 停车助手',
+    desc: '微信小程序 AI Skill 预研 demo（搜索/收藏停车点）；平台能力未开放，尚未上线',
+    tag: '预研 · 小程序',
+    color: '#64748b',
+    localOnly: true,
+    hint: '个人预研项目 · 简历中标注为技术探索，非主案例',
   },
   {
     title: 'Coco English',
