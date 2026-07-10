@@ -77,13 +77,6 @@ export const tools: Tool[] = [
     color: '#ef4444',
     url: `${import.meta.env.BASE_URL}judeng/index.html`,
   },
-  {
-    title: 'AI Prompt 图书馆',
-    desc: '精选 AI Prompt 合集，支持收藏与暗色主题，持续更新',
-    tag: 'Library',
-    color: '#a855f7',
-    url: 'https://sun-rise-dev.github.io/ai-prompt-library/',
-  },
 ]
 
 export const methodology: MethodStep[] = [

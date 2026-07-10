@@ -59,7 +59,7 @@ describe('agents / tools / methodology 数据完整性', () => {
   })
 
   it('tools 含本地工具与在线演示', () => {
-    expect(tools.length).toBeGreaterThanOrEqual(5)
+    expect(tools.length).toBeGreaterThanOrEqual(4)
     expect(tools.some((t) => t.localOnly)).toBe(true)
     tools.filter((t) => !t.localOnly).forEach((t) => {
       expect(t.url).toMatch(/^(\.\/|\/|https?:\/\/)/)
