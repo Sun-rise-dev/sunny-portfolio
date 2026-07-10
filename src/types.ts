@@ -3,7 +3,18 @@
  */
 
 export type PageId = 'home' | 'cases' | 'agents' | 'tools' | 'methodology'
-export type CaseId = 'car-shop' | 'tcm-clinic'
+export type CaseId =
+  | 'enterprise-booking'
+  | 'wellness-booking'
+  | 'clinic-agent'
+  | 'car-shop'
+  | 'tcm-clinic'
+
+/** 案例详情页展示的脱敏截图 */
+export interface CaseImage {
+  src: string
+  caption: string
+}
 
 /** 量化成果，供 Counter 做计数动画 */
 export interface Metric {
@@ -41,7 +52,17 @@ export interface Case {
   architecture: ArchNode[]
   actions: CaseAction[]
   metrics: Metric[]
-  review: { lessons: string[]; reusable: string[]; scaleOut: string[] }
+  /** 脱敏物证截图（可选，路径相对 public/） */
+  images?: CaseImage[]
+  review: {
+    lessons: string[]
+    reusable: string[]
+    scaleOut: string[]
+    /** 复制/扩展路径区块标题，默认「规模化复制路径」 */
+    scaleOutTitle?: string
+    /** 复制/扩展路径区块说明 */
+    scaleOutHint?: string
+  }
 }
 
 /** Agent 作品卡片 */
@@ -52,6 +73,8 @@ export interface Agent {
   metrics: string[]
   stack: string[]
   link?: string
+  /** 面试时可现场演示完整链路（无公开链接） */
+  liveDemo?: boolean
 }
 
 /** PWA 工具产品 */

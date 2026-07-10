@@ -30,7 +30,7 @@ export default function AgentsPage() {
       <div className="relative max-w-5xl mx-auto">
         <SectionTitle as="h1" sub="Coze · 工作流 · 自动化">Agent 作品</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
-          基于真实业务场景搭建的智能体与工作流，覆盖私信转化、内容生产与视频运营。
+          基于真实业务场景配置的智能体：对话采集、结构化通知与可扩展接口；标注「面试演示」的可现场走完整链路。
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {agents.map((agent) => (
@@ -56,7 +56,12 @@ export default function AgentsPage() {
                   <Tag key={s}>{s}</Tag>
                 ))}
               </div>
-              {!agent.link && <ChatMockup />}
+              {agent.liveDemo && (
+                <p className="mt-4 text-xs text-emerald-300/90 font-medium">
+                  ✓ 面试可现场演示完整对话 → 飞书通知链路
+                </p>
+              )}
+              {!agent.link && !agent.liveDemo && <ChatMockup />}
               {agent.link && (
                 <a
                   href={agent.link}

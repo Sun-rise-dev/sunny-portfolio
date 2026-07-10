@@ -19,9 +19,9 @@ export default function MethodologyPage() {
         style={{ background: `radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 60%), ${config.theme.background}` }}
       />
       <div className="relative max-w-3xl mx-auto">
-        <SectionTitle as="h1" sub="从诊断到规模化复制">我的 AI 落地方法论</SectionTitle>
+        <SectionTitle as="h1" sub="从需求确认到交付验收">我的 AI 落地方法论</SectionTitle>
         <p className="text-amber-100/60 text-sm mb-10">
-          单店验证是起点，第六步把方案抽象为可配置模块，支撑多门店/SaaS 批量交付。
+          六步法对齐 B2B 预约与 Agent 交付实践：先书面确认，再配置上线，最后验收与 Fork 复制。
         </p>
 
         <div className="relative pl-8 border-l-2 border-amber-500/30 space-y-10">

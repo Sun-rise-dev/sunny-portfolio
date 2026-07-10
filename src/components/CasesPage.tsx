@@ -1,5 +1,5 @@
 /**
- * 落地案例页 — 列表 + 详情六段叙事
+ * 落地案例页 — 列表 + 详情六段叙事 + 脱敏物证图集
  */
 import config from '../config'
 import { cases } from '../cases'
@@ -31,6 +31,32 @@ function ArchitectureFlow({ nodes }: { nodes: Case['architecture'] }) {
         </div>
       ))}
     </div>
+  )
+}
+
+/** 脱敏物证截图网格 */
+function CaseEvidenceGallery({ images }: { images: NonNullable<Case['images']> }) {
+  return (
+    <section>
+      <SectionTitle>交付物证（脱敏）</SectionTitle>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {images.map((item) => (
+          <figure
+            key={item.src}
+            className="rounded-2xl overflow-hidden"
+            style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(251, 191, 36, 0.2)' }}
+          >
+            <img
+              src={item.src}
+              alt={item.caption}
+              className="w-full h-auto object-cover"
+              loading="lazy"
+            />
+            <figcaption className="px-3 py-2 text-amber-100/60 text-xs">{item.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -81,6 +107,11 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
           </div>
         </div>
       </section>
+
+      {/* 物证截图（有则展示） */}
+      {data.images && data.images.length > 0 && (
+        <CaseEvidenceGallery images={data.images} />
+      )}
 
       {/* ③ 角色 */}
       <section>
@@ -182,9 +213,10 @@ function CaseDetailView({ data, onBack }: { data: Case; onBack: () => void }) {
             backdropFilter: 'blur(10px)',
           }}
         >
-          <SectionTitle>规模化复制路径</SectionTitle>
+          <SectionTitle>{data.review.scaleOutTitle ?? '规模化复制路径'}</SectionTitle>
           <p className="text-amber-100/50 text-xs mb-3 -mt-2">
-            以下为单店 pilot 验证后的 rollout 设计思路（假设性表述，非已落地连锁项目）。
+            {data.review.scaleOutHint ??
+              '以下为单店 pilot 验证后的 rollout 设计思路（假设性表述，非已落地连锁项目）。'}
           </p>
           <ul className="space-y-2 text-amber-100/75 list-disc list-inside">
             {data.review.scaleOut.map((item) => (
@@ -232,9 +264,9 @@ export default function CasesPage({ activeCaseId, openCase, onBack }: CasesPageP
       <div className="relative max-w-4xl mx-auto">
         {!activeCase ? (
           <>
-            <SectionTitle as="h1" sub="2 个完整行业案例">落地案例库</SectionTitle>
+            <SectionTitle as="h1" sub="B2B 交付 · Agent 配置 · 脱敏物证">落地案例库</SectionTitle>
             <p className="text-amber-100/60 text-sm mb-8 max-w-2xl">
-              单店是验证场：每个案例含量化成果、可复制模块，以及面向连锁/SaaS 的规模化 rollout 设计思路。公司名已脱敏，数据与简历一致。
+              主案例为 B2B 健康预约系统（0→1 + Fork）与 Coze 智能客服；含脱敏截图与交付模块说明。早期单店运营实践排在后面作参考。公司名已脱敏，叙事与投递版简历一致。
             </p>
             <div className="grid gap-4">
               {cases.map((c) => (
