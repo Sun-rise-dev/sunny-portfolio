@@ -1,30 +1,27 @@
 /**
- * 应用根组件 — 路由外壳 + ErrorBoundary
+ * 应用根组件 — 两态 Hash 路由（主页 / 案例详情）+ ErrorBoundary
  */
-import React, { useState } from 'react'
+import React from 'react'
 import './index.css'
 import config from './config'
-import type { PageId, CaseId } from './types'
+import { cases } from './cases'
+import type { PageId, CaseId, SectionId } from './types'
+import { useHashRoute, scrollToSection } from './hooks'
 import TopBar from './components/TopBar'
-import Hero from './components/Hero'
-import CasesPage from './components/CasesPage'
-import AgentsPage from './components/AgentsPage'
-import ToolsPage from './components/ToolsPage'
-import MethodologyPage from './components/MethodologyPage'
+import HomePage from './HomePage'
+import CaseDetailPage from './components/CaseDetailPage'
 import { PageTransition } from './components/ui'
 
-/** 同步 document.title 与 config */
-function useDocumentTitle(page: PageId) {
+/** 同步 document.title 与当前路由（详情页带案例标题，利于分享识别） */
+function useDocumentTitle(page: PageId, caseId: CaseId | null) {
   React.useEffect(() => {
-    const suffix: Record<PageId, string> = {
-      home: config.siteTitle,
-      cases: '落地案例',
-      agents: 'Agent 作品',
-      tools: '工具产品',
-      methodology: '方法论',
+    if (page === 'case' && caseId) {
+      const c = cases.find((item) => item.id === caseId)
+      document.title = c ? `${c.title} | 落地案例 | ${config.siteTitle}` : config.siteTitle
+      return
     }
-    document.title = page === 'home' ? suffix.home : `${suffix[page]} | ${config.siteTitle}`
-  }, [page])
+    document.title = config.siteTitle
+  }, [page, caseId])
 }
 
 class ErrorBoundary extends React.Component<
@@ -47,15 +44,14 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="min-h-screen bg-paper flex items-center justify-center">
           <div className="text-center space-y-4 px-6">
-            <h2 className="text-amber-400 text-xl font-bold">页面遇到了一个小问题</h2>
-            <p className="text-amber-100/60 text-sm">{this.state.errorMsg || '未知错误'}</p>
+            <h2 className="text-vermilion text-xl font-bold">页面遇到了一个小问题</h2>
+            <p className="text-ink-soft text-sm">{this.state.errorMsg || '未知错误'}</p>
             <button
               type="button"
               onClick={() => { this.setState({ hasError: false, errorMsg: '' }); window.location.reload() }}
-              className="px-5 py-2 rounded-full text-sm font-semibold text-white"
-              style={{ background: `linear-gradient(135deg, ${config.theme.primary}, ${config.theme.accent})` }}
+              className="btn-accent"
             >
               刷新页面
             </button>
@@ -68,55 +64,67 @@ class ErrorBoundary extends React.Component<
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageId>('home')
-  const [activeCaseId, setActiveCaseId] = useState<CaseId | null>(null)
+  const [route, nav] = useHashRoute()
+  const { page, caseId: activeCaseId } = route
 
-  useDocumentTitle(currentPage)
+  /** 详情页点导航时携带的目标章节：先回主页，HomePage 挂载后消费 */
+  const [pendingSection, setPendingSection] = React.useState<SectionId | null>(null)
+  /** 主页当前章节（HomePage 上报，TopBar 高亮） */
+  const [activeSection, setActiveSection] = React.useState<SectionId>('hero')
+  /** 离开主页时的滚动位置，从详情返回时恢复 */
+  const homeScrollY = React.useRef(0)
 
-  /** 切换主页面并重置案例详情 */
-  const navigate = (page: PageId) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    setCurrentPage(page)
-    setActiveCaseId(null)
-  }
+  useDocumentTitle(page, activeCaseId)
 
-  /** 打开案例详情（保持在 cases 页） */
-  const openCase = (id: CaseId) => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
-    setCurrentPage('cases')
-    setActiveCaseId(id)
-  }
+  /** 打开案例详情：先记录主页滚动位置，再写 hash */
+  const openCase = React.useCallback(
+    (id: CaseId) => {
+      homeScrollY.current = window.scrollY
+      nav('case', id)
+    },
+    [nav]
+  )
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <Hero navigate={navigate} />
-      case 'cases':
-        return (
-          <CasesPage
-            activeCaseId={activeCaseId}
-            openCase={openCase}
-            onBack={() => setActiveCaseId(null)}
-          />
-        )
-      case 'agents':
-        return <AgentsPage />
-      case 'tools':
-        return <ToolsPage />
-      case 'methodology':
-        return <MethodologyPage />
-      default:
-        return <Hero navigate={navigate} />
-    }
-  }
+  /** 锚点导航：主页直接滚动；详情页先回主页由 HomePage 消费滚动 */
+  const handleNavSection = React.useCallback(
+    (id: SectionId) => {
+      if (page === 'case') {
+        setPendingSection(id)
+        nav('home')
+      } else {
+        scrollToSection(id)
+      }
+    },
+    [page, nav]
+  )
+
+  const activeCase = page === 'case' && activeCaseId
+    ? cases.find((c) => c.id === activeCaseId) ?? null
+    : null
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-black text-white overflow-x-hidden">
-        <TopBar currentPage={currentPage} navigate={navigate} />
-        <PageTransition key={`${currentPage}-${activeCaseId ?? ''}`}>
-          {renderPage()}
-        </PageTransition>
+      <div className="min-h-screen bg-paper text-ink overflow-x-hidden">
+        <a href="#main-content" className="skip-link">
+          跳转到主内容
+        </a>
+        <TopBar mode={page} activeSection={activeSection} onNavSection={handleNavSection} />
+        {/* tabIndex=-1：skip link 锚点跳转后可接收焦点 */}
+        <div id="main-content" tabIndex={-1}>
+          {activeCase ? (
+            <CaseDetailPage data={activeCase} onBack={() => handleNavSection('cases')} />
+          ) : (
+            <PageTransition>
+              <HomePage
+                openCase={openCase}
+                initialSection={pendingSection ?? route.section ?? null}
+                consumeInitialSection={() => setPendingSection(null)}
+                restoreScrollRef={homeScrollY}
+                onActiveSectionChange={setActiveSection}
+              />
+            </PageTransition>
+          )}
+        </div>
       </div>
     </ErrorBoundary>
   )

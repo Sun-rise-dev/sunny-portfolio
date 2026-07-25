@@ -1,121 +1,139 @@
 /**
- * 顶部导航栏 — 五页切换、滚动进度条、联系 CTA
+ * 顶部导航栏 — 亮色编辑风：品牌块 + 章节锚点 + 联系 CTA + 滚动进度条
+ * 无障碍：aria-current 标记当前章节；移动菜单支持 Escape 关闭、焦点移入/还原、点击外部收起
  */
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import config from '../config'
-import { useClock, useScrollProgress } from '../hooks'
-import type { PageId } from '../types'
+import { useScrollProgress, SECTION_IDS, SECTION_LABELS } from '../hooks'
+import type { PageId, SectionId } from '../types'
 
-const NAV_ITEMS: { id: PageId; label: string }[] = [
-  { id: 'home', label: '首页' },
-  { id: 'cases', label: '落地案例' },
-  { id: 'agents', label: 'Agent 作品' },
-  { id: 'tools', label: '工具产品' },
-  { id: 'methodology', label: '方法论' },
-]
+/** TopBar 中部锚点（封面由品牌块承接，这里从「能力」开始） */
+const NAV_SECTIONS = SECTION_IDS.filter((id) => id !== 'hero')
 
 interface TopBarProps {
-  currentPage: PageId
-  navigate: (page: PageId) => void
+  /** 当前页面模式：主页锚点导航 / 详情页返回 */
+  mode: PageId
+  /** 主页当前激活章节（详情页下忽略） */
+  activeSection: SectionId
+  /** 点击锚点：主页直接滚动；详情页由 App 先回主页再滚动 */
+  onNavSection: (id: SectionId) => void
 }
 
-export default function TopBar({ currentPage, navigate }: TopBarProps) {
-  const time = useClock()
+export default function TopBar({ mode, activeSection, onNavSection }: TopBarProps) {
   const progress = useScrollProgress()
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
-  const handleNav = (page: PageId) => {
-    navigate(page)
+  const handleNav = (id: SectionId) => {
+    onNavSection(id)
     setMenuOpen(false)
   }
 
+  // 移动菜单：打开时焦点移入首项；Escape 关闭并还原焦点；点击外部收起
+  useEffect(() => {
+    if (!menuOpen) return
+    menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
+    }
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as Node
+      if (
+        menuRef.current && !menuRef.current.contains(target) &&
+        !menuButtonRef.current?.contains(target)
+      ) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [menuOpen])
+
   return (
     <>
-      {/* 滚动进度条 */}
+      {/* 滚动进度条（纯展示，读屏忽略） */}
       <div
-        className="fixed top-0 left-0 h-[2px] z-50 transition-all duration-200"
-        style={{
-          width: `${progress}%`,
-          background: `linear-gradient(90deg, ${config.theme.primary}, ${config.theme.accent}, ${config.theme.primary})`,
-          boxShadow: `0 0 10px ${config.theme.primary}99`,
-        }}
+        className="fixed top-0 left-0 h-[2px] z-50 bg-vermilion"
+        style={{ width: `${progress}%`, transition: 'width 0.15s ease-out' }}
+        aria-hidden="true"
       />
       <nav
-        className="fixed top-0 left-0 right-0 z-40 px-4 md:px-12 py-4 flex items-center justify-between"
-        style={{
-          background: 'linear-gradient(180deg, rgba(10,5,0,0.92) 0%, rgba(10,5,0,0.75) 70%, transparent 100%)',
-          backdropFilter: 'blur(12px)',
-        }}
+        aria-label="主导航"
+        className="fixed top-0 left-0 right-0 z-40 px-4 md:px-10 py-3 flex items-center justify-between bg-paper/85 border-b border-hairline"
+        style={{ backdropFilter: 'blur(12px)' }}
       >
-        {/* Logo */}
-        <button type="button" onClick={() => handleNav('home')} className="group flex items-center gap-2.5 shrink-0">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-lg"
-            style={{
-              background: `linear-gradient(135deg, ${config.theme.primary} 0%, ${config.theme.accent} 100%)`,
-              boxShadow: `0 4px 14px ${config.theme.primary}66`,
-            }}
-          >
+        {/* 品牌块：点击回封面 */}
+        <button
+          type="button"
+          onClick={() => handleNav('hero')}
+          className="group flex items-center gap-2.5 shrink-0"
+          aria-label={`${config.brandName} — 返回封面`}
+        >
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center font-black text-white text-base bg-vermilion">
             {config.initials}
           </div>
           <div className="hidden sm:block text-left">
-            <div className="text-white font-bold text-sm">{config.brandName}</div>
-            <div className="text-amber-300/60 text-[10px] font-mono">{config.brandSub}</div>
+            <div className="text-ink font-bold text-sm leading-tight">{config.brandName}</div>
+            <div className="text-ink-faint text-[10px] font-mono">{config.brandSub}</div>
           </div>
         </button>
 
-        {/* 桌面导航 */}
+        {/* 桌面锚点导航 */}
         <div className="hidden lg:flex items-center gap-1">
-          {NAV_ITEMS.map((item) => {
-            const active = currentPage === item.id
+          {mode === 'case' && (
+            <button
+              type="button"
+              onClick={() => handleNav('cases')}
+              className="mr-2 px-3 py-2 text-sm text-vermilion font-medium"
+            >
+              ← 返回主页
+            </button>
+          )}
+          {NAV_SECTIONS.map((id) => {
+            const active = mode === 'home' && activeSection === id
             return (
               <button
-                key={item.id}
+                key={id}
                 type="button"
-                onClick={() => handleNav(item.id)}
-                className="relative px-3 py-2 text-sm transition-colors"
-                style={{ color: active ? '#fde68a' : 'rgba(251, 191, 36, 0.55)' }}
+                onClick={() => handleNav(id)}
+                aria-current={active ? 'true' : undefined}
+                className={`relative px-3 py-2 text-sm transition-colors ${
+                  active ? 'text-ink font-semibold' : 'text-ink-faint hover:text-ink'
+                }`}
               >
-                {item.label}
+                {SECTION_LABELS[id]}
                 {active && (
-                  <span
-                    className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full"
-                    style={{ background: config.theme.primary }}
-                  />
+                  <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-vermilion" />
                 )}
               </button>
             )
           })}
         </div>
 
-        {/* 右侧：时钟 + CTA + 移动端菜单 */}
+        {/* 右侧：CTA + 移动端菜单 */}
         <div className="flex items-center gap-2 md:gap-3">
-          <div
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full"
-            style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(251, 191, 36, 0.15)' }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-amber-100/80 text-xs font-mono">{time}</span>
-          </div>
-          <a
-            href={config.contactEmail}
-            className="hidden sm:inline-flex px-4 py-2 rounded-full text-xs font-semibold text-white transition-all hover:scale-105"
-            style={{
-              background: `linear-gradient(135deg, ${config.theme.primary}, ${config.theme.accent})`,
-              boxShadow: `0 4px 14px ${config.theme.primary}4D`,
-            }}
-          >
+          <a href={config.contactEmail} className="btn-accent hidden sm:inline-flex !px-4 !py-2 !text-xs">
             {config.ctaText}
           </a>
           <button
+            ref={menuButtonRef}
             type="button"
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-amber-200"
-            style={{ border: '1px solid rgba(251, 191, 36, 0.25)', background: 'rgba(0,0,0,0.5)' }}
-            aria-label="打开导航菜单"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-ink border border-hairline bg-paper"
+            aria-label={menuOpen ? '关闭导航菜单' : '打开导航菜单'}
             aria-expanded={menuOpen}
+            aria-controls="mobile-nav-menu"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               {menuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -129,27 +147,30 @@ export default function TopBar({ currentPage, navigate }: TopBarProps) {
       {/* 移动端下拉菜单 */}
       {menuOpen && (
         <div
-          className="fixed top-[72px] left-0 right-0 z-40 lg:hidden px-4 py-3 flex flex-col gap-1"
-          style={{
-            background: 'rgba(10, 5, 0, 0.95)',
-            borderBottom: '1px solid rgba(251, 191, 36, 0.15)',
-            backdropFilter: 'blur(16px)',
-          }}
+          ref={menuRef}
+          id="mobile-nav-menu"
+          role="menu"
+          aria-label="移动端导航"
+          className="fixed top-[60px] left-0 right-0 z-40 lg:hidden px-4 py-3 flex flex-col gap-1 bg-paper border-b border-hairline"
+          style={{ animation: 'slideDown 0.25s ease-out both' }}
         >
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleNav(item.id)}
-              className="text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors"
-              style={{
-                color: currentPage === item.id ? '#fde68a' : 'rgba(251, 191, 36, 0.7)',
-                background: currentPage === item.id ? 'rgba(251, 191, 36, 0.12)' : 'transparent',
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
+          {NAV_SECTIONS.map((id) => {
+            const active = mode === 'home' && activeSection === id
+            return (
+              <button
+                key={id}
+                type="button"
+                role="menuitem"
+                onClick={() => handleNav(id)}
+                aria-current={active ? 'true' : undefined}
+                className={`text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  active ? 'text-vermilion bg-vermilion/5' : 'text-ink-soft'
+                }`}
+              >
+                {SECTION_LABELS[id]}
+              </button>
+            )
+          })}
         </div>
       )}
     </>

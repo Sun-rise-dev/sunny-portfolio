@@ -31,6 +31,19 @@ beforeAll(() => {
     return 1
   })
   vi.stubGlobal('cancelAnimationFrame', () => {})
-  // jsdom 未实现 scrollTo，路由切换时会调用
+  // jsdom 未实现 scrollTo / scrollIntoView / matchMedia，路由与锚点导航会调用
   window.scrollTo = vi.fn()
+  Element.prototype.scrollIntoView = vi.fn()
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }))
+  // jsdom 的 canvas.getContext 会打印 Not implemented 警告，静默为返回 null（组件按无 2D 环境退出）
+  HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(null) as never
 })

@@ -1,8 +1,7 @@
 /**
- * 共享 UI 小件 — Counter、标签、区块标题、页面切换动画
+ * 共享 UI 小件 — Counter、标签、区块标题、页面切换动画、统计卡
  */
 import { useState, useEffect, useRef, type ReactNode } from 'react'
-import config from '../config'
 
 /** 进入视口后从 0 计数到目标值的动画数字 */
 export function Counter({
@@ -45,19 +44,19 @@ export function Counter({
   return <span ref={ref}>{prefix}{count}{suffix}</span>
 }
 
-/** 琥珀色胶囊标签 */
-export function Tag({ children, color = config.theme.primary }: { children: ReactNode; color?: string }) {
+/** 纸面胶囊标签；color 提供时以前置色点表示（工具卡片分类用） */
+export function Tag({ children, color }: { children: ReactNode; color?: string }) {
   return (
-    <span
-      className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider"
-      style={{ background: `${color}30`, color: '#fde68a', border: `1px solid ${color}50` }}
-    >
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider text-ink-soft bg-paper border border-hairline">
+      {color && (
+        <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} aria-hidden="true" />
+      )}
       {children}
     </span>
   )
 }
 
-/** 区块标题（带左侧琥珀圆点）；as 控制语义层级，默认 h2，页面主标题传 h1 */
+/** 区块标题（左侧朱红方块）；as 控制语义层级，默认 h2，页面主标题传 h1 */
 export function SectionTitle({
   children,
   sub,
@@ -68,10 +67,10 @@ export function SectionTitle({
   as?: 'h1' | 'h2'
 }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
-      <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-      <Heading className="text-white font-bold text-lg tracking-wide">{children}</Heading>
-      {sub && <span className="text-amber-300/50 text-xs font-mono">{sub}</span>}
+    <div className="flex items-baseline gap-3 mb-6">
+      <span className="w-2 h-2 bg-vermilion shrink-0" aria-hidden="true" />
+      <Heading className="text-ink font-serif font-bold text-xl md:text-2xl tracking-tight">{children}</Heading>
+      {sub && <span className="text-ink-faint text-xs font-mono">{sub}</span>}
     </div>
   )
 }
@@ -91,42 +90,23 @@ export function StatCard({
   suffix,
   prefix,
   label,
-  color,
   delay,
 }: {
   value: number
   suffix: string
   prefix?: string
   label: string
-  color: string
   delay: number
 }) {
   return (
     <div
-      className="relative group p-4 rounded-2xl overflow-hidden"
-      style={{
-        background: 'rgba(0, 0, 0, 0.55)',
-        border: '1px solid rgba(251, 191, 36, 0.2)',
-        backdropFilter: 'blur(10px)',
-        animation: `slideUp 0.7s ease-out ${delay}s both`,
-      }}
+      className="paper-card p-4 md:p-5 rounded-2xl"
+      style={{ animation: `slideUp 0.7s ease-out ${delay}s both` }}
     >
-      <div
-        className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
-        style={{ background: color, filter: 'blur(30px)' }}
-      />
-      <div
-        className="text-2xl md:text-3xl font-black tracking-tight"
-        style={{
-          background: `linear-gradient(135deg, ${color}, #fef3c7)`,
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}
-      >
+      <div className="stat-num">
         <Counter target={value} suffix={suffix} prefix={prefix} />
       </div>
-      <div className="text-amber-200/60 text-[10px] mt-1.5 uppercase tracking-widest">{label}</div>
+      <div className="text-ink-faint text-[10px] mt-1.5 uppercase tracking-widest font-mono">{label}</div>
     </div>
   )
 }

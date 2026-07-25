@@ -1,8 +1,19 @@
 /**
- * 作品集站点类型定义 — PageId、案例与内容数据结构
+ * 作品集站点类型定义 — PageId、SectionId、案例与内容数据结构
  */
 
-export type PageId = 'home' | 'cases' | 'agents' | 'tools' | 'methodology'
+export type PageId = 'home' | 'case'
+
+/** 主页 section 锚点 id（封面 + 正文 01–06） */
+export type SectionId =
+  | 'hero'
+  | 'about'
+  | 'cases'
+  | 'agents'
+  | 'tools'
+  | 'methodology'
+  | 'contact'
+
 export type CaseId =
   | 'enterprise-booking'
   | 'wellness-booking'

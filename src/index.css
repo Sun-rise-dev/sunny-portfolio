@@ -3,21 +3,9 @@
 @tailwind utilities;
 
 /* ─── Keyframes ─────────────────────────────────────── */
-@keyframes floatUp {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.15); }
-}
-
-@keyframes slideInLeft {
-  0% { opacity: 0; transform: translateX(-30px); }
-  100% { opacity: 1; transform: translateX(0); }
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -26,13 +14,13 @@
 }
 
 @keyframes slideDown {
-  0% { opacity: 0; transform: translateY(-20px); }
+  0% { opacity: 0; transform: translateY(-12px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes slideInLeft {
+  0% { opacity: 0; transform: translateX(-24px); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInUp {
@@ -45,54 +33,239 @@
   51%, 100% { opacity: 0; }
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes scrollDot {
-  0% { transform: translateY(0); opacity: 1; }
-  50% { transform: translateY(8px); opacity: 0.3; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-33.333%); }
 }
 
-/* Character-specific */
-@keyframes floatCharacter {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+/* ─── Lenis 平滑滚动兼容（库会向 <html> 注入 lenis 类名） ── */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
-@keyframes colorSweep {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-@keyframes colorBreathe {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-@keyframes floatOrb {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  33% { transform: translate(15px, -20px) scale(1.2); opacity: 1; }
-  66% { transform: translate(-10px, -10px) scale(0.9); opacity: 0.8; }
-}
-
+/* ─── 基础层 ────────────────────────────────────────── */
 @layer base {
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
   }
   body {
-    @apply bg-black text-white antialiased;
+    @apply bg-paper text-ink antialiased;
     font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
   }
   ::selection {
-    @apply bg-amber-500/40 text-white;
+    @apply bg-vermilion/20 text-ink;
+  }
+
+  /* 键盘导航可见焦点 — 朱红描边 */
+  :focus-visible {
+    outline: 2px solid rgba(194, 65, 12, 0.65);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* 纸面细滚动条 */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #faf7f2;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(194, 65, 12, 0.22);
+    border-radius: 8px;
+    border: 2px solid #faf7f2;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(194, 65, 12, 0.4);
+  }
+}
+
+/* ─── 复用组件类 ────────────────────────────────────── */
+@layer components {
+  /* 章节外壳：居中栏宽 + 大垂直留白（封面与页脚例外） */
+  .section-shell {
+    @apply relative mx-auto w-full max-w-5xl px-6 md:px-10 py-20 md:py-28;
+  }
+
+  /* 章节头：编号 + 标题 + 副文案 */
+  .section-head {
+    @apply mb-10 md:mb-14;
+  }
+  .section-index {
+    @apply font-mono text-xs tracking-[0.35em] text-vermilion uppercase;
+  }
+  .section-title {
+    @apply font-serif font-black text-3xl md:text-5xl text-ink mt-3 tracking-tight;
+  }
+  .section-sub {
+    @apply mt-4 max-w-2xl text-sm md:text-base leading-relaxed text-ink-soft;
+  }
+
+  /* 编辑风细分隔线 */
+  .hairline {
+    @apply border-t border-hairline;
+  }
+
+  /* 纸面卡片：白底 + 暖灰细边 + 轻阴影 */
+  .paper-card {
+    background: #fffdf9;
+    border: 1px solid #e6dfd2;
+    box-shadow: 0 1px 2px rgba(34, 28, 21, 0.04);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .paper-card-hover:hover {
+    transform: translateY(-4px);
+    border-color: rgba(194, 65, 12, 0.45);
+    box-shadow: 0 14px 36px -16px rgba(34, 28, 21, 0.18);
+  }
+
+  /* 纸面胶囊标签 */
+  .chip-paper {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-medium text-ink-soft;
+    background: #faf7f2;
+    border: 1px solid #e6dfd2;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
+  .chip-paper:hover {
+    background: rgba(194, 65, 12, 0.08);
+    border-color: rgba(194, 65, 12, 0.4);
+    color: #9a3409;
+  }
+
+  /* 按钮：朱红实心 / 墨线描边 */
+  .btn-accent {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white;
+    background: #c2410c;
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+  .btn-accent:hover {
+    background: #9a3409;
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-ink;
+    border: 1px solid #221c15;
+    transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+  .btn-outline:hover {
+    border-color: #c2410c;
+    color: #c2410c;
+    transform: translateY(-1px);
+  }
+
+  /* 统计大数字 */
+  .stat-num {
+    @apply font-serif font-black text-3xl md:text-4xl text-ink;
+  }
+
+  /* 引用条：左朱红竖线（职责边界声明用） */
+  .pull-quote {
+    @apply pl-4 py-1 text-sm leading-relaxed text-ink-soft italic;
+    border-left: 3px solid #c2410c;
+  }
+
+  /* 编辑风链接下划线 */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  /* 右侧章节圆点导航 */
+  .dots-nav {
+    @apply fixed right-5 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-3;
+  }
+  .dots-nav-item {
+    @apply relative flex items-center justify-center w-4 h-4;
+  }
+  .dots-nav-dot {
+    @apply block w-2 h-2 rounded-full bg-ink-faint/50;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+  }
+  .dots-nav-item:hover .dots-nav-dot {
+    background: #c2410c;
+  }
+  .dots-nav-item[data-active='true'] .dots-nav-dot {
+    background: #c2410c;
+    transform: scale(1.7);
+  }
+  .dots-nav-label {
+    @apply absolute right-6 top-1/2 -translate-y-1/2 whitespace-nowrap px-2 py-0.5 rounded text-xs font-mono text-ink-soft opacity-0 pointer-events-none;
+    background: #fffdf9;
+    border: 1px solid #e6dfd2;
+    transition: opacity 0.25s ease;
+  }
+  .dots-nav-item:hover .dots-nav-label {
+    opacity: 1;
+  }
+
+  /* 滚动 reveal：进入视口时上浮淡入 */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 跳转主内容链接：仅键盘聚焦时可见 */
+  .skip-link {
+    position: fixed;
+    top: -48px;
+    left: 16px;
+    z-index: 100;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background: #c2410c;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    transition: top 0.2s ease;
+  }
+  .skip-link:focus-visible {
+    top: 12px;
+  }
+
+  /* 技能流光带轨道：三份内容循环平移 */
+  .marquee-track {
+    width: max-content;
+    animation: marquee 36s linear infinite;
+  }
+}
+
+/* ─── 动效偏好：减少非必要动画 ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
