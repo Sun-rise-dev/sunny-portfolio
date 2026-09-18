@@ -1,5 +1,5 @@
 /**
- * App 路由与单页导航测试 — 主页各章节渲染、案例详情往返、旧链接重定向
+ * App 路由与单页导航测试 — 五项作品、深链、旧链接、TopBar
  */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -12,58 +12,83 @@ describe('App 单页路由', () => {
     vi.mocked(Element.prototype.scrollIntoView).mockClear()
   })
 
-  it('默认渲染主页全部章节', () => {
+  it('默认渲染招聘判断路径全部章节', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { name: '能力矩阵' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '落地案例' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Agent 作品' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '工具产品' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '我的 AI 落地方法论' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '联系我' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: '孙炜烁' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '五项核心作品' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '交付方法论' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '能力边界' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '联系' })).toBeInTheDocument()
   })
 
-  it('点击主案例卡进入详情页', async () => {
+  it('首屏可见五项作品索引', () => {
+    render(<App />)
+    const index = screen.getByRole('navigation', { name: '五项核心作品索引' })
+    expect(index.querySelectorAll('a')).toHaveLength(5)
+  })
+
+  it('点击作品卡进入详情页', async () => {
     const user = userEvent.setup()
     render(<App />)
-    await user.click(screen.getByRole('button', { name: /CASE 01/ }))
+    await user.click(screen.getByRole('link', { name: /WORK 01/ }))
     expect(
       await screen.findByRole('heading', { level: 1, name: '某企业 · 员工健康预约' })
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /返回案例列表/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '项目背景' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '我的职责' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '解决方案架构' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '核心动作' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '复盘与边界' })).toBeInTheDocument()
   })
 
   it('详情页返回后主页章节重现', async () => {
     const user = userEvent.setup()
     render(<App />)
-    await user.click(screen.getByRole('button', { name: /CASE 01/ }))
-    const back = await screen.findByRole('button', { name: /返回案例列表/ })
+    await user.click(screen.getByRole('link', { name: /WORK 01/ }))
+    const back = await screen.findByRole('link', { name: /返回作品列表/ })
     await user.click(back)
-    expect(await screen.findByRole('heading', { name: '能力矩阵' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '落地案例' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: '五项核心作品' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '能力边界' })).toBeInTheDocument()
   })
 
-  it('预置 #/cases/clinic-agent 直达案例详情', async () => {
+  it('预置 #/cases/clinic-agent 直达详情', async () => {
     window.location.hash = '#/cases/clinic-agent'
     render(<App />)
     expect(
-      await screen.findByRole('heading', { level: 1, name: '某中医诊所 · 智能客服' })
+      await screen.findByRole('heading', { level: 1, name: /某中医诊所 · 智能客服/ })
     ).toBeInTheDocument()
   })
 
-  it('旧链接 #/agents 重定向到主页并滚动到 Agent 章节', async () => {
+  it('旧别名 #/cases/car-shop 解析为私信智能体', async () => {
+    window.location.hash = '#/cases/car-shop'
+    render(<App />)
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /私信智能体/ })
+    ).toBeInTheDocument()
+  })
+
+  it('旧链接 #/agents 重定向到作品区', async () => {
     window.location.hash = '#/agents'
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Agent 作品' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '能力矩阵' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: '五项核心作品' })).toBeInTheDocument()
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
   })
 
-  it('TopBar 锚点导航触发章节滚动（移动菜单路径）', async () => {
-    // jsdom 不命中 lg 断点：桌面导航 display:none，走移动菜单验证同一套锚点逻辑
+  it('TopBar 移动菜单锚点触发滚动', async () => {
     const user = userEvent.setup()
     render(<App />)
     await user.click(screen.getByRole('button', { name: '打开导航菜单' }))
-    await user.click(screen.getByRole('menuitem', { name: '方法论' }))
+    await user.click(screen.getByRole('button', { name: '方法' }))
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
+  })
+
+  it('无物证作品展示可验证说明而非伪造图', async () => {
+    window.location.hash = '#/cases/jd-matcher'
+    render(<App />)
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /JD 智能筛选/ })
+    ).toBeInTheDocument()
+    expect(screen.getByText(/个人工具，面试可演示/)).toBeInTheDocument()
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 })

@@ -28,6 +28,31 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # 体积门禁：禁止 judeng 等大目录回混；产物总大小与主 JS gzip 上限
+      - name: Bundle size gate
+        run: |
+          set -euo pipefail
+          if [ -d dist/judeng ]; then
+            echo "ERROR: dist/judeng must not be published"
+            exit 1
+          fi
+          TOTAL_KB=$(du -sk dist | cut -f1)
+          echo "dist total: ${TOTAL_KB}KB"
+          if [ "$TOTAL_KB" -gt 4096 ]; then
+            echo "ERROR: dist exceeds 4MB budget (${TOTAL_KB}KB)"
+            exit 1
+          fi
+          MAIN_JS=$(find dist/assets -name 'index-*.js' | head -n1)
+          if [ -z "$MAIN_JS" ]; then
+            echo "ERROR: main index-*.js not found"
+            exit 1
+          fi
+          GZIP_BYTES=$(gzip -c "$MAIN_JS" | wc -c)
+          echo "main js gzip: ${GZIP_BYTES} bytes ($MAIN_JS)"
+          if [ "$GZIP_BYTES" -gt 102400 ]; then
+            echo "ERROR: main JS gzip exceeds 100KB (${GZIP_BYTES})"
+            exit 1
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -1,117 +1,105 @@
 /**
- * 作品集站点类型定义 — PageId、SectionId、案例与内容数据结构
+ * 作品集类型 — 统一五项核心作品（系统 / Agent / 工具）与章节锚点
  */
 
+/** 页面两态：主页 / 作品详情 */
 export type PageId = 'home' | 'case'
 
-/** 主页 section 锚点 id（封面 + 正文 01–06） */
-export type SectionId =
-  | 'hero'
-  | 'about'
-  | 'cases'
-  | 'agents'
-  | 'tools'
-  | 'methodology'
-  | 'contact'
+/** 主页章节锚点（招聘判断路径） */
+export type SectionId = 'hero' | 'works' | 'methodology' | 'about' | 'contact'
 
-export type CaseId =
+/** 作品分类 */
+export type WorkKind = 'system' | 'agent' | 'tool'
+
+/** 五项核心作品 id */
+export type WorkId =
   | 'enterprise-booking'
   | 'wellness-booking'
   | 'clinic-agent'
-  | 'car-shop'
-  | 'tcm-clinic'
+  | 'dm-agent'
+  | 'jd-matcher'
 
-/** 案例详情页展示的脱敏截图 */
-export interface CaseImage {
+/** @deprecated 兼容旧命名，等同 WorkId */
+export type CaseId = WorkId
+
+/** 物证截图 */
+export interface WorkImage {
   src: string
   caption: string
+  /** 显式宽高，降低 CLS */
+  width?: number
+  height?: number
 }
 
-/** 量化成果，供 Counter 做计数动画 */
+/** 量化成果 */
 export interface Metric {
   label: string
-  value: number
+  value: number | string
   prefix?: string
   suffix?: string
   note?: string
 }
 
-/** 方案架构流程图节点 */
+/** 方案架构节点 */
 export interface ArchNode {
   name: string
   desc: string
 }
 
-/** 案例核心动作步骤 */
-export interface CaseAction {
+/** 核心动作步骤 */
+export interface WorkAction {
   step: number
   title: string
   tools: string[]
   desc: string
 }
 
-/** 落地案例完整数据（列表 + 详情六段） */
-export interface Case {
-  id: CaseId
+/** 统一作品详情（六段叙事） */
+export interface PortfolioItem {
+  id: WorkId
+  kind: WorkKind
+  /** 列表/导航短标签 */
+  kindLabel: string
   title: string
   industry: string
   period: string
   role: string
+  /** 卡片一句话摘要 */
   summary: string
-  /** 是否在列表默认展示；false 归入「早期参考」 */
-  featured?: boolean
-  background: { industry: string; scale: string; painPoints: string[] }
+  /** 首屏索引用的交付物关键词 */
+  deliverables: string[]
+  /** 可验证方式说明 */
+  proofHint: string
+  background: {
+    industry: string
+    scale: string
+    painPoints: string[]
+  }
   responsibilities: string[]
   architecture: ArchNode[]
-  actions: CaseAction[]
+  actions: WorkAction[]
   metrics: Metric[]
-  /** 脱敏物证截图（可选，路径相对 public/） */
-  images?: CaseImage[]
-  /** 交付流程图（可选） */
-  deliveryFlow?: CaseImage
+  images?: WorkImage[]
+  deliveryFlow?: WorkImage
   review: {
     lessons: string[]
     reusable: string[]
     scaleOut: string[]
-    /** 复制/扩展路径区块标题，默认「规模化复制路径」 */
     scaleOutTitle?: string
-    /** 复制/扩展路径区块说明 */
     scaleOutHint?: string
   }
 }
 
-/** Agent 作品卡片 */
-export interface Agent {
-  name: string
-  scene: string
-  desc: string
-  metrics: string[]
-  stack: string[]
-  link?: string
-  /** 面试时可现场演示完整链路（无公开链接） */
-  liveDemo?: boolean
-  /** 是否在列表默认展示 */
-  featured?: boolean
-}
+/** @deprecated 兼容旧 Case 命名 */
+export type Case = PortfolioItem
+export type CaseImage = WorkImage
+export type CaseAction = WorkAction
 
-/** PWA / 本地工具 */
-export interface Tool {
-  title: string
-  desc: string
-  tag: string
-  color: string
-  /** 外链；本地工具可省略 */
-  url?: string
-  /** 本地工具：不跳转，展示使用说明 */
-  localOnly?: boolean
-  hint?: string
-}
-
-/** 方法论时间轴步骤 */
+/** 方法论步骤 */
 export interface MethodStep {
   step: number
   title: string
   definition: string
   points: string[]
-  relatedCase?: CaseId
+  relatedCase?: WorkId
 }

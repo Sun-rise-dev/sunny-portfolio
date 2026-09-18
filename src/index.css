@@ -109,6 +109,15 @@ html.lenis, html.lenis body {
     @apply mt-4 max-w-2xl text-sm md:text-base leading-relaxed text-ink-soft;
   }
 
+  /* 详情页块标题 */
+  .section-block-title {
+    @apply flex items-center gap-3 mb-6 font-serif font-bold text-xl md:text-2xl text-ink tracking-tight;
+  }
+  .section-block-title::before {
+    content: '';
+    @apply w-2 h-2 bg-vermilion shrink-0;
+  }
+
   /* 编辑风细分隔线 */
   .hairline {
     @apply border-t border-hairline;

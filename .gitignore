@@ -4,3 +4,8 @@ dist/
 *.local
 .env
 .mimocode/
+
+# 本地简历，不入库
+*.pdf
+孙炜烁的简历.pdf
+

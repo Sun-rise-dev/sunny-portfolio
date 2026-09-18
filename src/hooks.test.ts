@@ -1,9 +1,9 @@
 /**
- * hooks 单元测试 — parseHash 路由解析与 useActiveSection 章节追踪
+ * hooks 单元测试 — parseHash / toHash / useActiveSection
  */
 import { renderHook, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import { parseHash, toHash, useActiveSection } from './hooks'
+import { parseHash, toHash, useActiveSection, SECTION_IDS } from './hooks'
 import type { SectionId } from './types'
 
 describe('parseHash', () => {
@@ -12,17 +12,25 @@ describe('parseHash', () => {
     expect(parseHash('#/')).toEqual({ page: 'home', caseId: null })
   })
 
-  it('#/cases/:id 解析为案例详情', () => {
+  it('#/cases/:id 解析为作品详情', () => {
     expect(parseHash('#/cases/clinic-agent')).toEqual({ page: 'case', caseId: 'clinic-agent' })
+    expect(parseHash('#/cases/jd-matcher')).toEqual({ page: 'case', caseId: 'jd-matcher' })
+    expect(parseHash('#/cases/dm-agent')).toEqual({ page: 'case', caseId: 'dm-agent' })
   })
 
-  it('非法案例 id 回退主页案例区', () => {
-    expect(parseHash('#/cases/not-exist')).toEqual({ page: 'home', caseId: null, section: 'cases' })
+  it('旧作品别名映射到现行 id', () => {
+    expect(parseHash('#/cases/car-shop')).toEqual({ page: 'case', caseId: 'dm-agent' })
+    expect(parseHash('#/cases/tcm-clinic')).toEqual({ page: 'case', caseId: 'clinic-agent' })
   })
 
-  it('旧五页链接重定向为主页 + 目标章节', () => {
-    expect(parseHash('#/agents')).toEqual({ page: 'home', caseId: null, section: 'agents' })
-    expect(parseHash('#/cases')).toEqual({ page: 'home', caseId: null, section: 'cases' })
+  it('非法作品 id 回退主页作品区', () => {
+    expect(parseHash('#/cases/not-exist')).toEqual({ page: 'home', caseId: null, section: 'works' })
+  })
+
+  it('旧五页链接重定向为主页 + 现行章节', () => {
+    expect(parseHash('#/agents')).toEqual({ page: 'home', caseId: null, section: 'works' })
+    expect(parseHash('#/cases')).toEqual({ page: 'home', caseId: null, section: 'works' })
+    expect(parseHash('#/tools')).toEqual({ page: 'home', caseId: null, section: 'works' })
     expect(parseHash('#/methodology')).toEqual({ page: 'home', caseId: null, section: 'methodology' })
   })
 
@@ -30,7 +38,7 @@ describe('parseHash', () => {
     expect(parseHash('#/constructor')).toEqual({ page: 'home', caseId: null })
   })
 
-  it('非 #/ 前缀锚点返回 null（不改路由）', () => {
+  it('非 #/ 前缀锚点返回 null', () => {
     expect(parseHash('#main-content')).toBeNull()
   })
 
@@ -44,12 +52,18 @@ describe('toHash', () => {
     expect(toHash('home')).toBe('#/')
   })
 
-  it('案例详情保持 #/cases/:id 格式', () => {
+  it('详情保持 #/cases/:id', () => {
     expect(toHash('case', 'clinic-agent')).toBe('#/cases/clinic-agent')
   })
 
   it('详情缺少 id 时回退主页', () => {
     expect(toHash('case', null)).toBe('#/')
+  })
+})
+
+describe('SECTION_IDS', () => {
+  it('招聘判断路径顺序固定', () => {
+    expect([...SECTION_IDS]).toEqual(['hero', 'works', 'methodology', 'about', 'contact'])
   })
 })
 
@@ -61,7 +75,6 @@ describe('useActiveSection', () => {
   it('多个章节同时可见时取文档序最靠上者', async () => {
     document.body.innerHTML = '<div id="s1"></div><div id="s2"></div>'
     const ids = ['s1', 's2'] as unknown as readonly SectionId[]
-    // Mock IntersectionObserver 在 observe 时立即上报可见 → 两个章节都命中
     const { result } = renderHook(() => useActiveSection(ids))
     await waitFor(() => {
       expect(result.current).toBe('s1')

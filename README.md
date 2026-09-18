@@ -1,136 +1,54 @@
-# Hello World — 个人主页模板
+# 孙炜烁 · 求职作品集
 
-一个暗色调 + 暖光动态背景的个人主页模板。改一个配置文件 + 换一张图就能用。
+纯静态 React/Vite 作品集，面向从简历顶部链接进入的招聘方。线上地址：
 
-## 30 秒上手
+**https://sun-rise-dev.github.io/sunny-portfolio/**
+
+## 定位
+
+- 岗位：AI 应用落地 / 实施交付（Junior）
+- 主路径五项作品：企业员工预约、康养预约 0→1、诊所「小墉」智能客服、汽车饰品店私信智能体、JD 油猴工具
+- 无后端 / CMS / 统计服务；联系方式为邮件与 GitHub
+
+## 本地开发
 
 ```bash
-# 1. 安装依赖
 npm install
-
-# 2. 编辑配置（改名字、头衔、链接等）
-#    打开 src/config.ts，改成你自己的信息
-
-# 3. 换背景图
-#    把你的图片放到 public/character-bg.jpg
-
-# 4. 构建
-npm run build
-
-# 5. 生成单文件 HTML（CSS/JS/图片全部内联，可独立运行）
-python3 inline.py
-
-# 6. 打开预览
-open dist/index-inline.html
+npm run dev      # 开发服务器
+npm run lint
+npm test
+npm run build    # 产出 dist/，由 GitHub Pages 部署
+npm run preview
 ```
 
-## 配置说明
+## 内容维护
 
-所有个性化内容都在 `src/config.ts`，**不需要改其他文件**。
+| 文件 | 用途 |
+|------|------|
+| `src/config.ts` | 真名、岗位、城市、到岗、薪资、职责边界（唯一来源） |
+| `src/works.ts` | 五项作品详情（六段叙事 + 物证） |
+| `src/content.ts` | 交付方法论六步 |
+| `public/cases/` | 脱敏截图与交付流程图 |
 
-| 配置项 | 说明 | 示例 |
-|--------|------|------|
-| `name` | 名字（打字机动画） | `'Sunny'` |
-| `initials` | 名字首字母（Logo） | `'S'` |
-| `siteTitle` | 浏览器标签标题 | `'Sunny - 个人主页'` |
-| `title` | 职位/头衔 | `'AI内容运营'` |
-| `tagline` | 格言（引号显示） | `'Building the future...'` |
-| `description` | 详细介绍 | `'专注用AI驱动创意生产...'` |
-| `tags` | 技能标签（前6个显示） | `['AI运营', 'Prompt Engineering', ...]` |
-| `marqueeItems` | 跑马灯文字 | `['✦ AI内容运营', ...]` |
-| `socialLinks` | 社交链接 | `[{name: 'GitHub', url: '...'}]` |
-| `stats` | 统计数字 | `[{value: 3, suffix: '+', label: 'Years', color: '#f59e0b'}]` |
-| `projects` | 项目展示卡 | `[{title: 'Lumen AI', desc: '...', tag: 'Product', color: '#f59e0b'}]` |
-| `terminalLines` | 终端动画文字 | `['$ whoami', '> sunny — ...']` |
-| `backgroundImage` | 背景图路径 | `'/character-bg.jpg'` |
-| `backgroundPosition` | 背景图对焦 | `'center 22%'` |
-| `theme.primary` | 主色 | `'#f59e0b'` |
-| `theme.accent` | 强调色 | `'#dc2626'` |
+新增作品时：在 `works.ts` 增加一项即可，路由合法 id 由数据源自动派生（`#/cases/:id`）。
 
-### 社交图标
+## 路由
 
-`socialLinks` 的 `name` 字段支持以下图标（自动匹配）：
-- `GitHub` / `Twitter` / `Bilibili` / `Email` / `WeChat` / `LinkedIn`
-- 其他名称会显示通用链接图标
-
-### 主题配色
-
-修改 `config.ts` 底部的 `theme` 对象：
-
-```ts
-theme: {
-  primary: '#f59e0b',    // 主色（渐变起始）
-  accent: '#dc2626',     // 强调色（渐变终止）
-  background: '#0a0505', // 底色
-  warmGlow: 'rgba(251, 113, 60, 0.3)',  // 暖光晕
-  coolGlow: 'rgba(244, 63, 94, 0.18)',  // 冷光晕
-}
-```
-
-## 背景图
-
-- 把图片放在 `public/` 目录
-- 在 `config.ts` 的 `backgroundImage` 设置路径
-- `backgroundPosition` 控制对焦点，格式 `'center XX%'`，XX 越小脸越高
-
-## 开发
-
-```bash
-npm run dev       # 启动开发服务器（热更新）
-npm run build     # TypeScript 编译 + Vite 打包
-python3 inline.py # 生成内联单文件 HTML
-```
+- `#/` — 主页（封面 → 作品 → 方法 → 关于 → 联系）
+- `#/cases/:id` — 作品详情深链（可复制、新标签打开）
+- 旧路径 `#/agents` `#/cases` `#/tools` 等会重定向到现行章节
+- 旧 id `car-shop` / `tcm-clinic` 映射到 `dm-agent` / `clinic-agent`
 
 ## 部署
 
-### 方式一：单文件 HTML
+推送到 `main` 触发 `.github/workflows/deploy.yml`：
 
-`inline.py` 输出的 `dist/index-inline.html` 是一个完全自包含的 HTML 文件（CSS/JS/图片全部 base64 内联），可以直接：
-- 双击打开
-- 上传到任何静态托管（Cloudflare Pages / Vercel / Netlify / GitHub Pages）
-- 发给别人直接打开
+`lint → test → build → 体积门禁 → GitHub Pages`
 
-### 方式二：Vercel
+体积门禁：`dist` ≤ 4MB，且不得包含 `judeng/`；主 JS gzip ≤ 100KB。
 
-```bash
-npx vercel
-```
-
-### 方式三：GitHub Pages
-
-```bash
-# 把 dist/ 目录推到 gh-pages 分支
-npm run build
-python3 inline.py
-# 或直接部署 dist/ 目录
-```
+功能开发请在独立分支进行，确认后再合并 `main`，避免未验收内容上线。
 
 ## 技术栈
 
-- React 19 + TypeScript
-- Vite 8
-- Tailwind CSS 3.4
-- 纯 CSS 动画（无额外动画库）
-
-## 目录结构
-
-```
-├── public/
-│   └── character-bg.jpg     ← 背景图
-├── src/
-│   ├── config.ts             ← ★ 唯一需要改的配置文件
-│   ├── App.tsx               ← 主组件（从 config 读数据）
-│   ├── index.css             ← 动画 keyframes + 基础样式
-│   ├── main.tsx              ← 入口
-│   └── vite-env.d.ts         ← TypeScript 声明
-├── index.html                ← HTML 模板（{{PLACEHOLDER}} 自动替换）
-├── inline.py                 ← 构建后脚本：内联 + 模板替换
-├── package.json
-├── vite.config.ts
-├── tailwind.config.js
-└── tsconfig.json
-```
-
-## License
-
-MIT
+React 19 · Vite · Tailwind CSS · Vitest · GitHub Pages（Hash 路由）

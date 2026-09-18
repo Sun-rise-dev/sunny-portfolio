@@ -3,38 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- CSP：仅放行自身与 Google Fonts；React 内联 style 需要 style-src 'unsafe-inline' -->
+    <!-- CSP：自身资源；允许内联 style（React style prop） -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
     />
     <meta name="theme-color" content="#faf7f2" />
+    <link rel="canonical" href="https://sun-rise-dev.github.io/sunny-portfolio/" />
     <title>孙炜烁 | AI 应用落地 · 实施交付</title>
     <meta name="description" content="孙炜烁，AI 应用落地与实施交付（Junior）。B2B 健康预约系统 0→1 与 Fork 部署、Coze 智能客服 + 飞书通知；擅长需求确认与交付验收，北京求职。" />
     <meta name="keywords" content="孙炜烁,AI应用落地,实施交付,Junior,Coze,飞书,B2B预约,北京求职" />
     <meta name="author" content="孙炜烁" />
+    <meta name="robots" content="index,follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="孙炜烁 | AI 应用落地 · 实施交付" />
-    <meta property="og:description" content="孙炜烁，AI 应用落地与实施交付（Junior）。B2B 健康预约系统 0→1 与 Fork 部署、Coze 智能客服 + 飞书通知；擅长需求确认与交付验收，北京求职。" />
+    <meta property="og:description" content="孙炜烁，AI 应用落地与实施交付（Junior）。五项核心作品：预约系统、智能客服、JD 工具；北京 · 一周内到岗。" />
     <meta property="og:url" content="https://sun-rise-dev.github.io/sunny-portfolio/" />
-    <meta property="og:image" content="https://sun-rise-dev.github.io/sunny-portfolio/character-bg.jpg" />
+    <meta property="og:image" content="https://sun-rise-dev.github.io/sunny-portfolio/og-cover.svg" />
     <meta property="og:locale" content="zh_CN" />
     <meta property="og:site_name" content="孙炜烁作品集" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="孙炜烁 | AI 应用落地 · 实施交付" />
-    <meta name="twitter:description" content="孙炜烁，AI 应用落地与实施交付（Junior）。B2B 健康预约系统 0→1 与 Fork 部署、Coze 智能客服 + 飞书通知；擅长需求确认与交付验收，北京求职。" />
-    <meta name="twitter:image" content="https://sun-rise-dev.github.io/sunny-portfolio/character-bg.jpg" />
+    <meta name="twitter:description" content="孙炜烁，AI 应用落地与实施交付（Junior）。五项核心作品：预约系统、智能客服、JD 工具；北京 · 一周内到岗。" />
+    <meta name="twitter:image" content="https://sun-rise-dev.github.io/sunny-portfolio/og-cover.svg" />
 
-    <link rel="icon" type="image/jpeg" href="./character-bg.jpg" />
+    <link rel="icon" type="image/svg+xml" href="./og-cover.svg" />
 
-    <!-- Google Fonts：衬线展示体 Noto Serif SC + 正文 Noto Sans SC + 等宽 JetBrains Mono -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- JSON-LD：Person + CreativeWork -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "name": "孙炜烁",
+            "alternateName": "Sunny",
+            "jobTitle": "AI 应用落地 / 实施交付",
+            "description": "AI 应用落地与实施交付（Junior）。擅长需求确认、规则配置与交付验收。",
+            "url": "https://sun-rise-dev.github.io/sunny-portfolio/",
+            "email": "sunfree2001@outlook.com",
+            "address": { "@type": "PostalAddress", "addressLocality": "北京", "addressCountry": "CN" },
+            "sameAs": ["https://github.com/Sun-rise-dev"]
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "孙炜烁求职作品集",
+            "url": "https://sun-rise-dev.github.io/sunny-portfolio/",
+            "author": { "@type": "Person", "name": "孙炜烁" },
+            "inLanguage": "zh-CN",
+            "about": "B2B 预约系统、Coze 智能客服与本地 JD 工具的交付档案"
+          }
+        ]
+      }
+    </script>
   </head>
   <body class="bg-paper text-ink antialiased">
     <div id="root"></div>

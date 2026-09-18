@@ -1,24 +1,50 @@
 /**
- * Lenis 惯性平滑滚动 — 单例封装
- * main.tsx 启动时初始化；reduced-motion 用户保持原生滚动
+ * Lenis 平滑滚动 — 按可见性启停；reduced-motion / 隐藏标签页时停 rAF
  */
 import Lenis from 'lenis'
 
 let lenis: Lenis | null = null
+let rafId: number | null = null
+let running = false
 
-/** 初始化平滑滚动（幂等）；reduced-motion 时跳过，全站回退原生滚动 */
+function stopRaf() {
+  if (rafId != null) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
+  running = false
+}
+
+function startRaf() {
+  if (running || !lenis) return
+  running = true
+  const tick = (time: number) => {
+    if (!running || !lenis) return
+    lenis.raf(time)
+    rafId = requestAnimationFrame(tick)
+  }
+  rafId = requestAnimationFrame(tick)
+}
+
+/** 初始化（幂等）；页面隐藏或不可见时暂停，避免常驻 rAF 耗电 */
 export function initSmoothScroll() {
   if (lenis) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
   lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
-  const raf = (time: number) => {
-    lenis?.raf(time)
-    requestAnimationFrame(raf)
+
+  const sync = () => {
+    if (document.hidden) {
+      stopRaf()
+      return
+    }
+    startRaf()
   }
-  requestAnimationFrame(raf)
+
+  document.addEventListener('visibilitychange', sync)
+  sync()
 }
 
-/** 获取 Lenis 实例；未初始化（测试环境 / reduced-motion）返回 null，调用方需回退 */
 export function getLenis() {
   return lenis
 }

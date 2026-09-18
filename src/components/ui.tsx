@@ -30,7 +30,8 @@ export function Counter({
     if (!started) return
     let s: number | null = null
     const startTime = performance.now()
-    const duration = 1800
+    // 减少动效时几乎瞬时到达终值
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 1800
     const animate = (now: number) => {
       const p = Math.min((now - startTime) / duration, 1)
       const eased = 1 - Math.pow(1 - p, 3)

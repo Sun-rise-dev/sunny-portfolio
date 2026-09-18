@@ -1,23 +1,24 @@
 /**
- * 应用根组件 — 两态 Hash 路由（主页 / 案例详情）+ ErrorBoundary
+ * 应用根组件 — Hash 路由（主页 / 作品详情）+ ErrorBoundary + 懒加载详情
  */
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import './index.css'
 import config from './config'
-import { cases } from './cases'
+import { getWork } from './works'
 import type { PageId, CaseId, SectionId } from './types'
 import { useHashRoute, scrollToSection } from './hooks'
 import TopBar from './components/TopBar'
 import HomePage from './HomePage'
-import CaseDetailPage from './components/CaseDetailPage'
 import { PageTransition } from './components/ui'
 
-/** 同步 document.title 与当前路由（详情页带案例标题，利于分享识别） */
+/** 详情页分包：非首屏按需加载 */
+const CaseDetailPage = lazy(() => import('./components/CaseDetailPage'))
+
 function useDocumentTitle(page: PageId, caseId: CaseId | null) {
   React.useEffect(() => {
     if (page === 'case' && caseId) {
-      const c = cases.find((item) => item.id === caseId)
-      document.title = c ? `${c.title} | 落地案例 | ${config.siteTitle}` : config.siteTitle
+      const c = getWork(caseId)
+      document.title = c ? `${c.title} | ${config.siteTitle}` : config.siteTitle
       return
     }
     document.title = config.siteTitle
@@ -50,7 +51,10 @@ class ErrorBoundary extends React.Component<
             <p className="text-ink-soft text-sm">{this.state.errorMsg || '未知错误'}</p>
             <button
               type="button"
-              onClick={() => { this.setState({ hasError: false, errorMsg: '' }); window.location.reload() }}
+              onClick={() => {
+                this.setState({ hasError: false, errorMsg: '' })
+                window.location.reload()
+              }}
               className="btn-accent"
             >
               刷新页面
@@ -67,16 +71,13 @@ export default function App() {
   const [route, nav] = useHashRoute()
   const { page, caseId: activeCaseId } = route
 
-  /** 详情页点导航时携带的目标章节：先回主页，HomePage 挂载后消费 */
   const [pendingSection, setPendingSection] = React.useState<SectionId | null>(null)
-  /** 主页当前章节（HomePage 上报，TopBar 高亮） */
   const [activeSection, setActiveSection] = React.useState<SectionId>('hero')
-  /** 离开主页时的滚动位置，从详情返回时恢复 */
   const homeScrollY = React.useRef(0)
 
   useDocumentTitle(page, activeCaseId)
 
-  /** 打开案例详情：先记录主页滚动位置，再写 hash */
+  /** 打开详情前记录主页滚动，便于返回恢复 */
   const openCase = React.useCallback(
     (id: CaseId) => {
       homeScrollY.current = window.scrollY
@@ -85,7 +86,6 @@ export default function App() {
     [nav]
   )
 
-  /** 锚点导航：主页直接滚动；详情页先回主页由 HomePage 消费滚动 */
   const handleNavSection = React.useCallback(
     (id: SectionId) => {
       if (page === 'case') {
@@ -98,9 +98,8 @@ export default function App() {
     [page, nav]
   )
 
-  const activeCase = page === 'case' && activeCaseId
-    ? cases.find((c) => c.id === activeCaseId) ?? null
-    : null
+  const activeCase =
+    page === 'case' && activeCaseId ? getWork(activeCaseId) ?? null : null
 
   return (
     <ErrorBoundary>
@@ -109,10 +108,20 @@ export default function App() {
           跳转到主内容
         </a>
         <TopBar mode={page} activeSection={activeSection} onNavSection={handleNavSection} />
-        {/* tabIndex=-1：skip link 锚点跳转后可接收焦点 */}
-        <div id="main-content" tabIndex={-1}>
+        <main id="main-content" tabIndex={-1}>
           {activeCase ? (
-            <CaseDetailPage data={activeCase} onBack={() => handleNavSection('cases')} />
+            <Suspense
+              fallback={
+                <div className="min-h-screen flex items-center justify-center text-ink-faint text-sm">
+                  加载交付档案…
+                </div>
+              }
+            >
+              <CaseDetailPage
+                data={activeCase}
+                onBack={() => handleNavSection('works')}
+              />
+            </Suspense>
           ) : (
             <PageTransition>
               <HomePage
@@ -124,7 +133,7 @@ export default function App() {
               />
             </PageTransition>
           )}
-        </div>
+        </main>
       </div>
     </ErrorBoundary>
   )
