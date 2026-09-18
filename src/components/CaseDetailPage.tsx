@@ -53,6 +53,20 @@ export default function CaseDetailPage({ data, onBack }: CaseDetailPageProps) {
             <p className="text-ink-soft text-sm md:text-base mt-4 leading-relaxed max-w-3xl">
               {data.summary}
             </p>
+            {/* Fork 项目显式标注上游来源，区分个人定制贡献与原作能力 */}
+            {data.attribution && (
+              <aside className="mt-5 border-l-2 border-vermilion/45 pl-4 text-sm text-ink-soft">
+                <p>{data.attribution.note}</p>
+                <a
+                  href={data.attribution.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex mt-2 min-h-11 items-center text-vermilion font-medium link-underline"
+                >
+                  上游开源项目：{data.attribution.name} ↗
+                </a>
+              </aside>
+            )}
           </header>
 
           <section aria-labelledby="bg-title">

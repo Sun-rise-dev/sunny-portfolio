@@ -17,7 +17,7 @@ export type WorkId =
   | 'wellness-booking'
   | 'clinic-agent'
   | 'dm-agent'
-  | 'jd-matcher'
+  | 'job-workbench'
 
 /** @deprecated 兼容旧命名，等同 WorkId */
 export type CaseId = WorkId
@@ -54,6 +54,13 @@ export interface WorkAction {
   desc: string
 }
 
+/** Fork / 二次开发项目的上游署名，避免把开源原作误写为个人原创 */
+export interface WorkAttribution {
+  name: string
+  url: string
+  note: string
+}
+
 /** 统一作品详情（六段叙事） */
 export interface PortfolioItem {
   id: WorkId
@@ -70,6 +77,8 @@ export interface PortfolioItem {
   deliverables: string[]
   /** 可验证方式说明 */
   proofHint: string
+  /** 基于开源项目定制时必须展示上游来源 */
+  attribution?: WorkAttribution
   background: {
     industry: string
     scale: string

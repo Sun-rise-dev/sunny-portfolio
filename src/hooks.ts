@@ -177,6 +177,8 @@ const VALID_WORK_IDS: ReadonlySet<string> = new Set(WORK_IDS)
 const LEGACY_WORK_ALIASES: Record<string, CaseId> = {
   'car-shop': 'dm-agent',
   'tcm-clinic': 'clinic-agent',
+  // 油猴项目已替换为 JOB 定制 Fork，保留旧简历/聊天中的详情链接
+  'jd-matcher': 'job-workbench',
 }
 
 /** 旧五页路径 → 现行 section（保证已分享链接不死） */

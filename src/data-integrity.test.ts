@@ -19,7 +19,7 @@ describe('五项核心作品', () => {
       'wellness-booking',
       'clinic-agent',
       'dm-agent',
-      'jd-matcher',
+      'job-workbench',
     ])
   })
 
@@ -56,9 +56,18 @@ describe('五项核心作品', () => {
     const dm = getWork('dm-agent')
     expect(dm?.images).toBeUndefined()
     expect(dm?.proofHint).toMatch(/不公开|可演示/)
-    const jd = getWork('jd-matcher')
-    expect(jd?.images).toBeUndefined()
-    expect(jd?.proofHint).toMatch(/个人工具/)
+    const job = getWork('job-workbench')
+    expect(job?.images).toBeUndefined()
+    expect(job?.proofHint).toMatch(/本地项目|不公开/)
+  })
+
+  it('JOB 定制 Fork 明确标注开源上游与个人贡献边界', () => {
+    const job = getWork('job-workbench')
+    expect(job?.title).toContain('JOB')
+    expect(job?.role).toMatch(/定制 Fork/)
+    expect(job?.attribution?.name).toBe('Career-Ops')
+    expect(job?.attribution?.url).toMatch(/^https:\/\/github\.com\/career-ops-hq\/career-ops/)
+    expect(job?.attribution?.note).toMatch(/不宣称从零开发/)
   })
 
   it('标题已脱敏且无夸大措辞', () => {

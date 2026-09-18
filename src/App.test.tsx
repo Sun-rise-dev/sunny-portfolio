@@ -82,13 +82,17 @@ describe('App 单页路由', () => {
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
   })
 
-  it('无物证作品展示可验证说明而非伪造图', async () => {
-    window.location.hash = '#/cases/jd-matcher'
+  it('JOB 定制 Fork 展示验证说明与上游署名而非伪造物证', async () => {
+    window.location.hash = '#/cases/job-workbench'
     render(<App />)
     expect(
-      await screen.findByRole('heading', { level: 1, name: /JD 智能筛选/ })
+      await screen.findByRole('heading', { level: 1, name: /JOB · AI 求职工作台/ })
     ).toBeInTheDocument()
-    expect(screen.getByText(/个人工具，面试可演示/)).toBeInTheDocument()
+    expect(screen.getByText(/本地项目可演示/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /上游开源项目：Career-Ops/ })).toHaveAttribute(
+      'href',
+      'https://github.com/career-ops-hq/career-ops'
+    )
     expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 })

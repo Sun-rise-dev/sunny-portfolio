@@ -7,7 +7,8 @@
 ## 定位
 
 - 岗位：AI 应用落地 / 实施交付（Junior）
-- 主路径五项作品：企业员工预约、康养预约 0→1、诊所「小墉」智能客服、汽车饰品店私信智能体、JD 油猴工具
+- 主路径五项作品：企业员工预约、康养预约 0→1、诊所「小墉」智能客服、汽车饰品店私信智能体、JOB AI 求职工作台
+- JOB 是基于开源 [Career-Ops](https://github.com/career-ops-hq/career-ops) 的个人定制 Fork，展示中文画像、工作流整合与四平台浏览安全门禁
 - 无后端 / CMS / 统计服务；联系方式为邮件与 GitHub
 
 ## 本地开发
@@ -38,6 +39,7 @@ npm run preview
 - `#/cases/:id` — 作品详情深链（可复制、新标签打开）
 - 旧路径 `#/agents` `#/cases` `#/tools` 等会重定向到现行章节
 - 旧 id `car-shop` / `tcm-clinic` 映射到 `dm-agent` / `clinic-agent`
+- 原油猴项目链接 `#/cases/jd-matcher` 映射到新的 `job-workbench` 详情
 
 ## 部署
 

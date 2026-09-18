@@ -14,13 +14,14 @@ describe('parseHash', () => {
 
   it('#/cases/:id 解析为作品详情', () => {
     expect(parseHash('#/cases/clinic-agent')).toEqual({ page: 'case', caseId: 'clinic-agent' })
-    expect(parseHash('#/cases/jd-matcher')).toEqual({ page: 'case', caseId: 'jd-matcher' })
+    expect(parseHash('#/cases/job-workbench')).toEqual({ page: 'case', caseId: 'job-workbench' })
     expect(parseHash('#/cases/dm-agent')).toEqual({ page: 'case', caseId: 'dm-agent' })
   })
 
   it('旧作品别名映射到现行 id', () => {
     expect(parseHash('#/cases/car-shop')).toEqual({ page: 'case', caseId: 'dm-agent' })
     expect(parseHash('#/cases/tcm-clinic')).toEqual({ page: 'case', caseId: 'clinic-agent' })
+    expect(parseHash('#/cases/jd-matcher')).toEqual({ page: 'case', caseId: 'job-workbench' })
   })
 
   it('非法作品 id 回退主页作品区', () => {

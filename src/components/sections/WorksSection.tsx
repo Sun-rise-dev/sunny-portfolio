@@ -17,7 +17,7 @@ export default function WorksSection({ openCase }: WorksSectionProps) {
           <div className="section-index">01 · Selected Work</div>
           <h2 id="works-title" className="section-title">五项核心作品</h2>
           <p className="section-sub">
-            两套预约系统、两个智能体、一个本地 JD 工具。公司名脱敏；物证缺失处标注面试可演示或客户环境不公开。
+            两套预约系统、两个智能体、一个定制求职工作台。公司名脱敏；Fork 项目明确标注上游，物证缺失处说明演示边界。
           </p>
         </header>
 
